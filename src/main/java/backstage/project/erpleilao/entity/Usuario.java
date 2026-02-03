@@ -1,0 +1,49 @@
+package backstage.project.erpleilao.entity;
+
+import backstage.project.erpleilao.entity.enums.TipoUsuario;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Entity
+@Table(name = "usuarios")
+@Getter @Setter
+public class Usuario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long usu_id;
+
+    @Column(nullable = false)
+    private String usu_nome;
+
+    @Column(unique = true, nullable = false)
+    private String usu_email;
+
+    @Column(nullable = true)
+    private String usu_senha;
+
+    @Column(unique = true, nullable = false)
+    private String usu_cpf;
+
+    @Enumerated(EnumType.STRING)
+    private TipoUsuario usu_tipo;
+
+    @Column(name = "usu_inativo", nullable = false, length = 1)
+    private String usu_inativo = "N";
+
+    private String usu_telefone;
+    private String usu_cidade;
+    private String usu_uf;
+    private String usu_rg;
+
+    @OneToMany(mappedBy = "faz_titular", cascade = CascadeType.ALL)
+    private List<Fazenda> usu_fazendas;
+
+    @Column(name = "usu_dt_criacao", nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime usu_dt_criacao;
+}

@@ -1,12 +1,18 @@
 services:
   postgres:
     image: 'postgres:latest'
+    container_name: erp-leilao-db
     environment:
-      - 'POSTGRES_DB=prod_leilao'
-      - 'POSTGRES_PASSWORD=admin'
-      - 'POSTGRES_USER=admin'
+      - POSTGRES_DB=prod_leilao
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
     ports:
       - '5432:5432'
+    healthcheck: # Garante que o banco está pronto antes da app subir
+      test: ["CMD-SHELL", "pg_isready -U admin -d prod_leilao"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   portainer:
     image: portainer/portainer-ce:latest
@@ -17,6 +23,20 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
     restart: always
+
+  app:
+    build: .
+    container_name: erp-leilao-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy # Só sobe a app quando o postgres der "OK"
+    environment:
+      # Removi a aspa simples que estava sobrando no final e usei o host correto
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/prod_leilao
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
 
 volumes:
   portainer_data:
