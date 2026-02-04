@@ -32,7 +32,6 @@ public class UsuarioService {
         funcionario.setUsu_inativo("N");
 
         Usuario salvo = repository.save(funcionario);
-
         return new UsuarioFuncionarioResponseDTO(salvo);
     }
 }
