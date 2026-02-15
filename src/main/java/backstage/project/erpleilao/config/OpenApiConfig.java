@@ -1,9 +1,10 @@
 package backstage.project.erpleilao.config;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,14 +16,14 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("AgroLance ERP - API")
-                        .description("API robusta para gestão de leilões de gado, controle de lotes e administração de usuários.")
-                        .version("v1.0.0")
-                        .contact(new Contact()
-                                .name("Gustavo Martins")
-                                .email("gustavo_mf1@hotmail.com")
-                                .url("https://github.com/gustavomf1"))
-                        .license(new License()
-                                .name("Apache 2.0")
-                                .url("https://springdoc.org")));
+                        .description("API para gestão de leilões de gado com segurança JWT.")
+                        .version("v1.0.0"))
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+                .components(new Components()
+                        .addSecuritySchemes("bearerAuth", new SecurityScheme()
+                                .name("bearerAuth")
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")));
     }
 }

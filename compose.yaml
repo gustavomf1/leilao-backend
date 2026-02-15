@@ -8,7 +8,7 @@ services:
       - POSTGRES_USER=admin
     ports:
       - '5432:5432'
-    healthcheck: # Garante que o banco está pronto antes da app subir
+    healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin -d prod_leilao"]
       interval: 5s
       timeout: 5s
@@ -31,9 +31,9 @@ services:
       - "8080:8080"
     depends_on:
       postgres:
-        condition: service_healthy # Só sobe a app quando o postgres der "OK"
+        condition: service_healthy
     environment:
-      # Removi a aspa simples que estava sobrando no final e usei o host correto
+      - JWT_SECRET=7f8a3c2b1e9d0f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/prod_leilao
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=admin

@@ -5,6 +5,7 @@ import backstage.project.erpleilao.entity.Usuario;
 import backstage.project.erpleilao.entity.enums.TipoUsuario;
 import backstage.project.erpleilao.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,9 @@ import java.util.List;
 public class UsuarioService {
     @Autowired
     private UsuarioRepository repository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Transactional
     public UsuarioFuncionarioResponseDTO salvarFuncionario(UsuarioFuncionarioDTO dto) {
@@ -31,6 +35,9 @@ public class UsuarioService {
         funcionario.setUsu_senha(dto.senha());
         funcionario.setUsu_tipo(TipoUsuario.FUNCIONARIO);
         funcionario.setUsu_inativo("N");
+
+        String senhaCriptografada = passwordEncoder.encode(dto.senha());
+        funcionario.setUsu_senha(senhaCriptografada);
 
         Usuario salvo = repository.save(funcionario);
         return new UsuarioFuncionarioResponseDTO(salvo);

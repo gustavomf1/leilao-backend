@@ -5,14 +5,18 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Table(name = "usuarios")
 @Getter @Setter
-public class Usuario {
+public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long usu_id;
@@ -46,4 +50,39 @@ public class Usuario {
     @Column(name = "usu_dt_criacao", nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime usu_dt_criacao;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.usu_tipo.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return this.usu_senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.usu_email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return "N".equalsIgnoreCase(this.usu_inativo);
+    }
 }
