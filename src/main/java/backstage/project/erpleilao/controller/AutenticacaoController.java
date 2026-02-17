@@ -2,7 +2,7 @@ package backstage.project.erpleilao.controller;
 
 import backstage.project.erpleilao.dtos.DadosTokenJWT;
 import backstage.project.erpleilao.dtos.LoginDTO;
-import backstage.project.erpleilao.entity.Usuario;
+import backstage.project.erpleilao.entity.UsuarioEntity;
 import backstage.project.erpleilao.service.TokenService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,7 +27,7 @@ public class AutenticacaoController {
         var authenticationToken = new UsernamePasswordAuthenticationToken(dados.email(), dados.senha());
         var authentication = manager.authenticate(authenticationToken);
 
-        var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
+        var tokenJWT = tokenService.gerarToken((UsuarioEntity) authentication.getPrincipal());
 
         return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
     }

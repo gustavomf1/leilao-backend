@@ -23,5 +23,5 @@ public class Fazenda {
 
     @ManyToOne
     @JoinColumn(name = "faz_titular", nullable = false)
-    private Usuario faz_titular;
+    private UsuarioEntity faz_titular;
 }

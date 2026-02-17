@@ -3,7 +3,7 @@ package backstage.project.erpleilao.service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import backstage.project.erpleilao.entity.Usuario;
+import backstage.project.erpleilao.entity.UsuarioEntity;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    public String gerarToken(Usuario usuario) {
+    public String gerarToken(UsuarioEntity usuario) {
         try {
             Algorithm algoritmo = Algorithm.HMAC256(secret);
 

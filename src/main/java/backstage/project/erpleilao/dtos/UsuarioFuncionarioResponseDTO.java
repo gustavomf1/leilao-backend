@@ -1,6 +1,6 @@
 package backstage.project.erpleilao.dtos;
 
-import backstage.project.erpleilao.entity.Usuario;
+import backstage.project.erpleilao.entity.UsuarioEntity;
 import backstage.project.erpleilao.entity.enums.TipoUsuario;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
@@ -28,7 +28,7 @@ public record UsuarioFuncionarioResponseDTO(
         @Schema(description = "Data e hora de criação do registro")
         LocalDateTime dataCriacao
 ) {
-    public UsuarioFuncionarioResponseDTO(Usuario usuario) {
+    public UsuarioFuncionarioResponseDTO(UsuarioEntity usuario) {
         this(
                 usuario.getUsu_id(),
                 usuario.getUsu_nome(),

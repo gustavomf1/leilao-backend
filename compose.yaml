@@ -24,6 +24,18 @@ services:
       - portainer_data:/data
     restart: always
 
+  redis:
+    image: redis:alpine
+    container_name: erp-leilao-redis
+    ports:
+      - "6379:6379"
+    # Adicionando um healthcheck simples para o Redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   app:
     build: .
     container_name: erp-leilao-backend
@@ -32,11 +44,16 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       - JWT_SECRET=7f8a3c2b1e9d0f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/prod_leilao
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=admin
+      # Dizendo ao Spring onde encontrar o Redis no Docker
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PORT=6379
 
 volumes:
   portainer_data:

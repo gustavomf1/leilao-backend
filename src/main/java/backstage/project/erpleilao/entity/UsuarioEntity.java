@@ -2,7 +2,9 @@ package backstage.project.erpleilao.entity;
 
 import backstage.project.erpleilao.entity.enums.TipoUsuario;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,7 +18,9 @@ import java.util.List;
 @Entity
 @Table(name = "usuarios")
 @Getter @Setter
-public class Usuario implements UserDetails {
+@NoArgsConstructor
+@AllArgsConstructor
+public class UsuarioEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long usu_id;

@@ -1,6 +1,6 @@
 package backstage.project.erpleilao.dtos;
 
-import backstage.project.erpleilao.entity.Usuario;
+import backstage.project.erpleilao.entity.UsuarioEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Dados de retorno do cliente")
@@ -26,7 +26,7 @@ public record UsuarioClienteResponseDTO(
         @Schema(description = "Estado (UF)", example = "SP")
         String uf
 ) {
-    public UsuarioClienteResponseDTO(Usuario usuario) {
+    public UsuarioClienteResponseDTO(UsuarioEntity usuario) {
         this(usuario.getUsu_id(), usuario.getUsu_nome(), usuario.getUsu_email(),
                 usuario.getUsu_cpf(), usuario.getUsu_telefone(), usuario.getUsu_cidade(),
                 usuario.getUsu_uf());

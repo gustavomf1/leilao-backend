@@ -1,7 +1,7 @@
 package backstage.project.erpleilao.service;
 
 import backstage.project.erpleilao.dtos.*;
-import backstage.project.erpleilao.entity.Usuario;
+import backstage.project.erpleilao.entity.UsuarioEntity;
 import backstage.project.erpleilao.entity.enums.TipoUsuario;
 import backstage.project.erpleilao.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class UsuarioService {
             throw new RuntimeException("CPF já cadastrado no sistema.");
         }
 
-        Usuario funcionario = new Usuario();
+        UsuarioEntity funcionario = new UsuarioEntity();
         funcionario.setUsu_nome(dto.nome());
         funcionario.setUsu_email(dto.email());
         funcionario.setUsu_cpf(dto.cpf());
@@ -39,7 +39,7 @@ public class UsuarioService {
         String senhaCriptografada = passwordEncoder.encode(dto.senha());
         funcionario.setUsu_senha(senhaCriptografada);
 
-        Usuario salvo = repository.save(funcionario);
+        UsuarioEntity salvo = repository.save(funcionario);
         return new UsuarioFuncionarioResponseDTO(salvo);
     }
 
@@ -52,7 +52,7 @@ public class UsuarioService {
             throw new RuntimeException("CPF já cadastrado no sistema.");
         }
 
-        Usuario cliente = new Usuario();
+        UsuarioEntity cliente = new UsuarioEntity();
         cliente.setUsu_nome(dto.nome());
         cliente.setUsu_email(dto.email());
         cliente.setUsu_cpf(dto.cpf());
@@ -63,7 +63,7 @@ public class UsuarioService {
         cliente.setUsu_tipo(TipoUsuario.CLIENTE);
         cliente.setUsu_inativo("N");
 
-        Usuario salvo = repository.save(cliente);
+        UsuarioEntity salvo = repository.save(cliente);
         return new UsuarioClienteResponseDTO(salvo);
     }
 
@@ -82,14 +82,14 @@ public class UsuarioService {
     }
 
     public UsuarioFuncionarioResponseDTO buscarFuncionarioPorId(Long id) {
-        Usuario usuario = repository.findById(id)
+        UsuarioEntity usuario = repository.findById(id)
                 .filter(u -> u.getUsu_tipo() == TipoUsuario.FUNCIONARIO)
                 .orElseThrow(() -> new RuntimeException("ID do funcionário não encontrado"));
         return new UsuarioFuncionarioResponseDTO(usuario);
     }
 
     public UsuarioClienteResponseDTO buscarClientePorId(Long id) {
-        Usuario usuario = repository.findById(id)
+        UsuarioEntity usuario = repository.findById(id)
                 .filter(u -> u.getUsu_tipo() == TipoUsuario.CLIENTE)
                 .orElseThrow(() -> new RuntimeException("ID do cliente não encontrado"));
         return new UsuarioClienteResponseDTO(usuario);
@@ -97,7 +97,7 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioFuncionarioResponseDTO atualizarFuncionario(Long id, UsuarioFuncionarioUpdateDTO dto) {
-        Usuario funcionario = repository.findById(id)
+        UsuarioEntity funcionario = repository.findById(id)
                 .filter(u -> u.getUsu_tipo() == TipoUsuario.FUNCIONARIO)
                 .orElseThrow(() -> new RuntimeException("Funcionário não encontrado."));
         if (dto.nome() != null) {
@@ -111,7 +111,7 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioClienteResponseDTO atualizarCliente(Long id, UsuarioClienteUpdateDTO dto) {
-        Usuario cliente = repository.findById(id)
+        UsuarioEntity cliente = repository.findById(id)
                 .filter(u -> u.getUsu_tipo() == TipoUsuario.CLIENTE)
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado."));
 
@@ -126,7 +126,7 @@ public class UsuarioService {
 
     @Transactional
     public void inativarUsuario(Long id) {
-        Usuario usuario = repository.findById(id)
+        UsuarioEntity usuario = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("ID de usuário não encontrado"));
 
         usuario.setUsu_inativo("S");
