@@ -23,11 +23,9 @@ public class LoteService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    // Agora injetamos o RedisTemplate para publicar no canal
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-    // Injetamos o tópico definido na RedisConfig
     @Autowired
     private ChannelTopic topic;
 
@@ -58,8 +56,6 @@ public class LoteService {
 
         var displayDto = new LoteDisplayDTO(loteSalvo);
 
-        // O PULO DO GATO: Publica no Redis em vez de enviar direto pro WebSocket
-        // O RedisListener vai capturar isso e enviar para o WebSocket de todas as instâncias
         redisTemplate.convertAndSend(topic.getTopic(), displayDto);
 
         return displayDto;

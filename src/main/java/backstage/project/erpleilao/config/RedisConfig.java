@@ -19,9 +19,7 @@ public class RedisConfig {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
-        // Usando Serializador de String para as chaves
         template.setKeySerializer(new StringRedisSerializer());
-        // Usando JSON para os valores (importante para o seu DTO)
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 
         return template;

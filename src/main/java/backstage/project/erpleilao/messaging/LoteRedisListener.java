@@ -22,10 +22,7 @@ public class LoteRedisListener implements MessageListener { // Adicione a interf
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
-            // No Redis, usamos message.getBody() para pegar os bytes
             LoteDisplayDTO dto = objectMapper.readValue(message.getBody(), LoteDisplayDTO.class);
-
-            // Envia para o tópico que o Angular está ouvindo
             messagingTemplate.convertAndSend("/topic/lotes", dto);
         } catch (IOException e) {
             System.err.println("Erro ao processar mensagem do Redis: " + e.getMessage());
