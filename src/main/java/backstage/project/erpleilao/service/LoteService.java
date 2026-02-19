@@ -5,11 +5,12 @@ import backstage.project.erpleilao.dtos.LoteRequestDTO;
 import backstage.project.erpleilao.entity.LoteEntity;
 import backstage.project.erpleilao.repository.LoteRepository;
 import backstage.project.erpleilao.repository.UsuarioRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate; // MUDANÇA AQUI
-import org.springframework.data.redis.listener.ChannelTopic; // MUDANÇA AQUI
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +26,9 @@ public class LoteService {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private ChannelTopic topic;
@@ -56,7 +60,11 @@ public class LoteService {
 
         var displayDto = new LoteDisplayDTO(loteSalvo);
 
-        redisTemplate.convertAndSend(topic.getTopic(), displayDto);
+        try {
+            redisTemplate.convertAndSend(topic.getTopic(), objectMapper.writeValueAsString(displayDto));
+        } catch (Exception e) {
+            System.err.println("Erro ao serializar lote para Redis: " + e.getMessage());
+        }
 
         return displayDto;
     }

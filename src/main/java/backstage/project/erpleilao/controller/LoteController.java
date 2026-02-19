@@ -5,7 +5,6 @@ import backstage.project.erpleilao.dtos.LoteRequestDTO;
 import backstage.project.erpleilao.service.LoteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +22,7 @@ public class LoteController {
     private LoteService service;
 
     @PostMapping
-    @Operation(summary = "Cadastra um novo lote", description = "Cria um lote e dispara notificação via Redis/WebSocket",
-            security = { @SecurityRequirement(name = "bearer-key") })
+    @Operation(summary = "Cadastra um novo lote", description = "Cria um lote e dispara notificação via Redis/WebSocket")
     public ResponseEntity<LoteDisplayDTO> cadastrar(@RequestBody @Valid LoteRequestDTO dados) {
         var novoLote = service.cadastrar(dados);
         return ResponseEntity.ok(novoLote);
