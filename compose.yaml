@@ -1,13 +1,53 @@
 services:
+  evolution_api:
+    image: atendai/evolution-api:latest
+    container_name: evolution_api
+    restart: always
+    ports:
+      - "8081:8080"
+    environment:
+      - SERVER_URL=http://localhost:8080
+      - API_TOKEN=123
+
+      - DATABASE_ENABLED=true
+      - DATABASE_PROVIDER=postgresql
+      - DATABASE_CONNECTION_URI=postgresql://admin:admin@postgres:5432/evolution?sslmode=disable
+      - DATABASE_CONNECTION_CLIENT_NAME=evolution
+      - DATABASE_SAVE_DATA_INSTANCE=true
+      - DATABASE_SAVE_DATA_NEW_MESSAGE=true
+      - DATABASE_SAVE_MESSAGE_UPDATE=true
+      - DATABASE_SAVE_DATA_CONTACTS=true
+      - DATABASE_SAVE_DATA_CHATS=true
+      - DATABASE_SAVE_DATA_LABELS=true
+      - DATABASE_SAVE_DATA_HISTORIC=true
+      - AUTHENTICATION_API_KEY=123
+
+      - CACHE_REDIS_ENABLED=true
+      - CACHE_REDIS_URI=redis://redis:6379/0
+      - CACHE_REDIS_PREFIX_KEY=evolution
+      - CACHE_REDIS_SAVE_INSTANCES=false
+      - CACHE_LOCAL_ENABLED=false
+
+      - CONFIG_SESSION_PHONE_VERSION=2.3000.1033541177
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./evolution_instances:/evolution/instances
   postgres:
-    image: 'postgres:latest'
+    image: 'postgres:16'
     container_name: erp-leilao-db
     environment:
       - POSTGRES_DB=prod_leilao
       - POSTGRES_PASSWORD=admin
       - POSTGRES_USER=admin
     ports:
-      - '5432:5432'
+      - '5433:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin -d prod_leilao"]
       interval: 5s
@@ -28,7 +68,7 @@ services:
     image: redis:alpine
     container_name: erp-leilao-redis
     ports:
-      - "6379:6379"
+      - "6380:6379"
     # Adicionando um healthcheck simples para o Redis
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -57,3 +97,4 @@ services:
 
 volumes:
   portainer_data:
+  postgres_data:
