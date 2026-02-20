@@ -43,10 +43,6 @@ public class SecurityFilter extends OncePerRequestFilter {
         if (authorizationHeader != null) {
             return authorizationHeader.replace("Bearer ", "");
         }
-        var tokenParam = request.getParameter("token");
-        if (tokenParam != null) {
-            return tokenParam;
-        }
         return null;
     }
 }
