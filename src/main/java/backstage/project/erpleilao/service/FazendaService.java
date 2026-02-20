@@ -37,29 +37,29 @@ public class FazendaService {
 
     @Transactional
     public FazendaResponseDTO salvar(FazendaRequestDTO dto) {
-        Fazenda fazenda = new Fazenda();
-        mapRequestToEntity(dto, fazenda);
-        return convertToResponseDTO(repository.save(fazenda));
+        FazendaEntity fazendaEntity = new FazendaEntity();
+        mapRequestToEntity(dto, fazendaEntity);
+        return convertToResponseDTO(repository.save(fazendaEntity));
     }
 
     @Transactional
     public FazendaResponseDTO atualizar(Long id, FazendaRequestDTO dto) {
-        Fazenda fazenda = repository.findById(id)
+        FazendaEntity fazendaEntity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Fazenda não encontrada"));
-        mapRequestToEntity(dto, fazenda);
-        return convertToResponseDTO(repository.save(fazenda));
+        mapRequestToEntity(dto, fazendaEntity);
+        return convertToResponseDTO(repository.save(fazendaEntity));
     }
 
     @Transactional
     public void excluir(Long id) {
-        Fazenda fazenda = repository.findById(id)
+        FazendaEntity fazendaEntity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Fazenda não encontrada para exclusão"));
 
-        fazenda.setInativo("S");
-        repository.save(fazenda);
+        fazendaEntity.setInativo("S");
+        repository.save(fazendaEntity);
     }
 
-    private void mapRequestToEntity(FazendaRequestDTO dto, Fazenda entity) {
+    private void mapRequestToEntity(FazendaRequestDTO dto, FazendaEntity entity) {
         entity.setNome(dto.nome());
         entity.setInscricao(dto.inscricao());
         entity.setCnpj(dto.cnpj());
@@ -75,17 +75,17 @@ public class FazendaService {
         entity.setFaz_titular(titular);
     }
 
-    private FazendaResponseDTO convertToResponseDTO(Fazenda fazenda) {
+    private FazendaResponseDTO convertToResponseDTO(FazendaEntity fazendaEntity) {
         return new FazendaResponseDTO(
-                fazenda.getId(),
-                fazenda.getNome(),
-                fazenda.getInscricao(),
-                fazenda.getCnpj(),
-                fazenda.getUf(),
-                fazenda.getCidade(),
-                fazenda.getInativo(),
-                fazenda.getDt_criacao(),
-                fazenda.getFaz_titular().getUsu_nome()
+                fazendaEntity.getId(),
+                fazendaEntity.getNome(),
+                fazendaEntity.getInscricao(),
+                fazendaEntity.getCnpj(),
+                fazendaEntity.getUf(),
+                fazendaEntity.getCidade(),
+                fazendaEntity.getInativo(),
+                fazendaEntity.getDt_criacao(),
+                fazendaEntity.getFaz_titular().getUsu_nome()
         );
     }
 }

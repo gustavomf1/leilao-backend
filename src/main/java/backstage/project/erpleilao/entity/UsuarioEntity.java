@@ -49,7 +49,7 @@ public class UsuarioEntity implements UserDetails {
     private String usu_rg;
 
     @OneToMany(mappedBy = "faz_titular", cascade = CascadeType.ALL)
-    private List<Fazenda> usu_fazendas;
+    private List<FazendaEntity> usu_fazendaEntities;
 
     @Column(name = "usu_dt_criacao", nullable = false, updatable = false)
     @CreationTimestamp

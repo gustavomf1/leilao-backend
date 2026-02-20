@@ -1,6 +1,6 @@
 package backstage.project.erpleilao.repository;
 
-import backstage.project.erpleilao.entity.Fazenda;
+import backstage.project.erpleilao.entity.FazendaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface FazendaRepository extends JpaRepository<Fazenda, Long> {
-    @Query("SELECT f FROM Fazenda f WHERE f.inativo = 'N'")
-    List<Fazenda> findAllAtivas();
+public interface FazendaRepository extends JpaRepository<FazendaEntity, Long> {
+    @Query("SELECT f FROM FazendaEntity f WHERE f.inativo = 'N'")
+    List<FazendaEntity> findAllAtivas();
 }

@@ -2,7 +2,7 @@ package backstage.project.erpleilao.service;
 
 import backstage.project.erpleilao.dtos.CondicaoRequestDTO;
 import backstage.project.erpleilao.dtos.CondicaoResponseDTO;
-import backstage.project.erpleilao.entity.Condicao;
+import backstage.project.erpleilao.entity.CondicaoEntity;
 import backstage.project.erpleilao.repository.CondicaoRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,36 +34,36 @@ public class CondicaoService {
 
     @Transactional
     public CondicaoResponseDTO salvar(CondicaoRequestDTO dto) {
-        Condicao condicao = new Condicao();
-        condicao.setTipo(dto.tipo());
-        condicao.setDescricao(dto.descricao());
-        condicao.setInativo("N");
-        return convertToResponseDTO(repository.save(condicao));
+        CondicaoEntity condicaoEntity = new CondicaoEntity();
+        condicaoEntity.setTipo(dto.tipo());
+        condicaoEntity.setDescricao(dto.descricao());
+        condicaoEntity.setInativo("N");
+        return convertToResponseDTO(repository.save(condicaoEntity));
     }
 
     @Transactional
     public CondicaoResponseDTO atualizar(Long id, CondicaoRequestDTO dto) {
-        Condicao condicao = repository.findById(id)
+        CondicaoEntity condicaoEntity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Condição não encontrada"));
-        condicao.setTipo(dto.tipo());
-        condicao.setDescricao(dto.descricao());
-        return convertToResponseDTO(repository.save(condicao));
+        condicaoEntity.setTipo(dto.tipo());
+        condicaoEntity.setDescricao(dto.descricao());
+        return convertToResponseDTO(repository.save(condicaoEntity));
     }
 
     @Transactional
     public void excluir(Long id) {
-        Condicao condicao = repository.findById(id)
+        CondicaoEntity condicaoEntity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Condição não encontrada"));
-        condicao.setInativo("S"); // Exclusão Lógica
-        repository.save(condicao);
+        condicaoEntity.setInativo("S"); // Exclusão Lógica
+        repository.save(condicaoEntity);
     }
 
-    private CondicaoResponseDTO convertToResponseDTO(Condicao condicao) {
+    private CondicaoResponseDTO convertToResponseDTO(CondicaoEntity condicaoEntity) {
         return new CondicaoResponseDTO(
-                condicao.getId(),
-                condicao.getTipo(),
-                condicao.getDescricao(),
-                condicao.getInativo()
+                condicaoEntity.getId(),
+                condicaoEntity.getTipo(),
+                condicaoEntity.getDescricao(),
+                condicaoEntity.getInativo()
         );
     }
 }
