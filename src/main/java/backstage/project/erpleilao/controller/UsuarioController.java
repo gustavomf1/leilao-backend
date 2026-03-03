@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/api/usuario")
 @Tag(name = "Usuários", description = "Gerenciamento de funcionários e clientes (pecuaristas) do sistema")
 public class UsuarioController {
 
@@ -39,13 +39,13 @@ public class UsuarioController {
     }
 
     @Operation(summary = "Lista todos os funcionários", description = "Retorna apenas os usuários ativos com perfil FUNCIONARIO.")
-    @GetMapping("/funcionarios")
+    @GetMapping("/funcionario")
     public ResponseEntity<List<UsuarioFuncionarioResponseDTO>> listarFuncionarios() {
         return ResponseEntity.ok(service.listarFuncionarios());
     }
 
     @Operation(summary = "Lista todos os clientes", description = "Retorna a lista de pecuaristas cadastrados e ativos.")
-    @GetMapping("/clientes")
+    @GetMapping("/cliente")
     public ResponseEntity<List<UsuarioClienteResponseDTO>> listarClientes() {
         return ResponseEntity.ok(service.listarClientes());
     }
@@ -55,21 +55,21 @@ public class UsuarioController {
             @ApiResponse(responseCode = "200", description = "Funcionário encontrado"),
             @ApiResponse(responseCode = "404", description = "Funcionário não localizado")
     })
-    @GetMapping("/funcionarios/{id}")
+    @GetMapping("/funcionario/{id}")
     public ResponseEntity<UsuarioFuncionarioResponseDTO> buscarFuncionarioPorId(
             @Parameter(description = "ID único do funcionário", example = "1") @PathVariable Long id) {
         return ResponseEntity.ok(service.buscarFuncionarioPorId(id));
     }
 
     @Operation(summary = "Busca cliente por ID")
-    @GetMapping("/clientes/{id}")
+    @GetMapping("/cliente/{id}")
     public ResponseEntity<UsuarioClienteResponseDTO> buscarClientePorId(
             @Parameter(description = "ID único do cliente", example = "5") @PathVariable Long id) {
         return ResponseEntity.ok(service.buscarClientePorId(id));
     }
 
     @Operation(summary = "Atualiza dados de um funcionário")
-    @PutMapping("/funcionarios/{id}")
+    @PutMapping("/funcionario/{id}")
     public ResponseEntity<UsuarioFuncionarioResponseDTO> atualizarFuncionario(
             @PathVariable Long id,
             @RequestBody UsuarioFuncionarioUpdateDTO dto) {
@@ -77,7 +77,7 @@ public class UsuarioController {
     }
 
     @Operation(summary = "Atualiza dados de um cliente")
-    @PutMapping("/clientes/{id}")
+    @PutMapping("/cliente/{id}")
     public ResponseEntity<UsuarioClienteResponseDTO> atualizarCliente(
             @PathVariable Long id,
             @RequestBody UsuarioClienteUpdateDTO dto) {

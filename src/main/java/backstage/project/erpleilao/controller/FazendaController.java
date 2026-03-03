@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/fazendas")
+@RequestMapping("/api/fazenda")
 @Tag(name = "Fazendas", description = "Endpoints para gerenciamento de propriedades rurais")
 @CrossOrigin("*")
 public class FazendaController {

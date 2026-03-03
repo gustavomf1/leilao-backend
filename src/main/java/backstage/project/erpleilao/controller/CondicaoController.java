@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/condicoes")
+@RequestMapping("/api/condicao")
 @Tag(name = "Condições", description = "Gerenciamento de condições de leilão")
 @CrossOrigin("*")
 public class CondicaoController {
