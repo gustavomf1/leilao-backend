@@ -67,4 +67,45 @@ public class LoteService {
                 .map(LoteDisplayDTO::new)
                 .toList();
     }
+
+    public LoteDisplayDTO buscarPorId(Long id) {
+        var lote = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Lote não encontrado"));
+        return new LoteDisplayDTO(lote);
+    }
+
+    @Transactional
+    public LoteDisplayDTO atualizar(Long id, LoteRequestDTO dados) {
+        var lote = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Lote não encontrado"));
+
+        var vendedor = usuarioRepository.findById(dados.vendedorId())
+                .orElseThrow(() -> new EntityNotFoundException("Vendedor não encontrado"));
+
+        var comprador = dados.compradorId() != null ?
+                usuarioRepository.findById(dados.compradorId()).orElse(null) : null;
+
+        lote.setCodigo(dados.codigo());
+        lote.setQntdAnimais(dados.qntdAnimais());
+        lote.setSexo(dados.sexo());
+        lote.setIdadeEmMeses(dados.idadeEmMeses());
+        lote.setPeso(dados.peso());
+        lote.setRaca(dados.raca());
+        lote.setEspecie(dados.especie());
+        lote.setCategoriaAnimal(dados.categoriaAnimal());
+        lote.setObs(dados.obs());
+        lote.setPrecoCompra(dados.precoCompra());
+        lote.setVendedor(vendedor);
+        lote.setComprador(comprador);
+
+        return new LoteDisplayDTO(lote);
+    }
+
+    @Transactional
+    public void deletar(Long id) {
+        if (!repository.existsById(id)) {
+            throw new EntityNotFoundException("Lote não encontrado");
+        }
+        repository.deleteById(id);
+    }
 }
