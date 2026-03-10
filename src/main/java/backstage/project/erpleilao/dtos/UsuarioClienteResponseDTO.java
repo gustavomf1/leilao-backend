@@ -24,11 +24,14 @@ public record UsuarioClienteResponseDTO(
         String cidade,
 
         @Schema(description = "Estado (UF)", example = "SP")
-        String uf
+        String uf,
+
+        @Schema(description = "RG do cliente", example = "12.345.678-9")
+        String rg
 ) {
     public UsuarioClienteResponseDTO(UsuarioEntity usuario) {
         this(usuario.getUsu_id(), usuario.getUsu_nome(), usuario.getUsu_email(),
                 usuario.getUsu_cpf(), usuario.getUsu_telefone(), usuario.getUsu_cidade(),
-                usuario.getUsu_uf());
+                usuario.getUsu_uf(), usuario.getUsu_rg());
     }
 }

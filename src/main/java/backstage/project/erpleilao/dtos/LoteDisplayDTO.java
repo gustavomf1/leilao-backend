@@ -33,7 +33,7 @@ public record LoteDisplayDTO(
                 lote.getEspecie(),
                 lote.getCategoriaAnimal(),
                 lote.getObs(),
-                null, // leilaoId - adicione o relacionamento se tiver
+                null,
                 lote.getVendedor() != null ? lote.getVendedor().getUsu_id() : null,
                 lote.getComprador() != null ? lote.getComprador().getUsu_id() : null,
                 lote.getPrecoCompra() != null ? lote.getPrecoCompra().doubleValue() : null,

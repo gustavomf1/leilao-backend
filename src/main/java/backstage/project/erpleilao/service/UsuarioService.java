@@ -131,4 +131,11 @@ public class UsuarioService {
 
         usuario.setUsu_inativo("S");
     }
+
+    public List<UsuarioClienteResponseDTO> buscarClientesPorNome(String nome) {
+        return repository.findByTipoAndNomeContaining(TipoUsuario.CLIENTE, nome)
+                .stream()
+                .map(UsuarioClienteResponseDTO::new)
+                .toList();
+    }
 }

@@ -94,4 +94,10 @@ public class UsuarioController {
         service.inativarUsuario(id);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Busca clientes por nome")
+    @GetMapping("/cliente/buscar")
+    public ResponseEntity<List<UsuarioClienteResponseDTO>> buscarPorNome(@RequestParam String nome) {
+        return ResponseEntity.ok(service.buscarClientesPorNome(nome));
+    }
 }

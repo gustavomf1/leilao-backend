@@ -22,6 +22,7 @@ public record FazendaResponseDTO(
 
         Date dtCriacao,
 
-        @Schema(description = "Nome do proprietário da fazenda")
-        String titularNome
+        String titularNome,
+
+        Long titularId
 ) {}

@@ -70,12 +70,15 @@ public class FazendaService {
             entity.setInativo("N");
         }
 
-        UsuarioEntity titular = usuarioRepository.findById(dto.titularId())
-                .orElseThrow(() -> new RuntimeException("Usuário titular não encontrado"));
-        entity.setFaz_titular(titular);
+        if (dto.titularId() != null) {
+            UsuarioEntity titular = usuarioRepository.findById(dto.titularId())
+                    .orElseThrow(() -> new RuntimeException("Usuário titular não encontrado"));
+            entity.setFaz_titular(titular);
+        }
     }
 
     private FazendaResponseDTO convertToResponseDTO(FazendaEntity fazendaEntity) {
+        UsuarioEntity titular = fazendaEntity.getFaz_titular();
         return new FazendaResponseDTO(
                 fazendaEntity.getId(),
                 fazendaEntity.getNome(),
@@ -85,7 +88,8 @@ public class FazendaService {
                 fazendaEntity.getCidade(),
                 fazendaEntity.getInativo(),
                 fazendaEntity.getDt_criacao(),
-                fazendaEntity.getFaz_titular().getUsu_nome()
+                titular != null ? titular.getUsu_nome() : null,
+                titular != null ? titular.getUsu_id() : null
         );
     }
 }
