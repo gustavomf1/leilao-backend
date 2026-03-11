@@ -56,4 +56,10 @@ public class FazendaController {
         service.excluir(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/buscar")
+    @Operation(summary = "Busca fazendas por nome")
+    public ResponseEntity<List<FazendaResponseDTO>> buscarPorNome(@RequestParam String nome) {
+        return ResponseEntity.ok(service.buscarPorNome(nome));
+    }
 }

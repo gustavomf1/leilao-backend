@@ -38,7 +38,7 @@ public class FazendaEntity {
     private String inativo = "N";
 
     @ManyToOne
-    @JoinColumn(name = "titular_id", nullable = false) // Mantido titular_id conforme seu script
+    @JoinColumn(name = "titular_id", nullable = true)
     private UsuarioEntity faz_titular;
 
     @PrePersist

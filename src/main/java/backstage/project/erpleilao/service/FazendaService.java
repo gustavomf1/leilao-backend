@@ -59,6 +59,13 @@ public class FazendaService {
         repository.save(fazendaEntity);
     }
 
+    public List<FazendaResponseDTO> buscarPorNome(String nome) {
+        return repository.findByNomeContaining(nome).stream()
+                .filter(f -> "N".equals(f.getInativo()))
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
     private void mapRequestToEntity(FazendaRequestDTO dto, FazendaEntity entity) {
         entity.setNome(dto.nome());
         entity.setInscricao(dto.inscricao());
