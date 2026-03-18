@@ -100,12 +100,17 @@ public class UsuarioService {
         UsuarioEntity funcionario = repository.findById(id)
                 .filter(u -> u.getUsu_tipo() == TipoUsuario.FUNCIONARIO)
                 .orElseThrow(() -> new RuntimeException("Funcionário não encontrado."));
-        if (dto.nome() != null) {
-            funcionario.setUsu_nome(dto.nome());
+
+        if (dto.nome() != null)   funcionario.setUsu_nome(dto.nome());
+        if (dto.tipo() != null)   funcionario.setUsu_tipo(dto.tipo());
+        if (dto.email() != null)  funcionario.setUsu_email(dto.email());
+        if (dto.cpf() != null)    funcionario.setUsu_cpf(dto.cpf());
+
+        // senha só atualiza se vier preenchida
+        if (dto.senha() != null && !dto.senha().isBlank()) {
+            funcionario.setUsu_senha(passwordEncoder.encode(dto.senha()));
         }
-        if (dto.tipo() != null) {
-            funcionario.setUsu_tipo(dto.tipo());
-        }
+
         return new UsuarioFuncionarioResponseDTO(funcionario);
     }
 
