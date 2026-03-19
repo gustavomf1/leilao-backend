@@ -9,5 +9,14 @@ public record UsuarioFuncionarioUpdateDTO(
         String nome,
 
         @Schema(description = "Novo tipo de perfil caso necessário", example = "FUNCIONARIO")
-        TipoUsuario tipo
+        TipoUsuario tipo,
+
+        @Schema(description = "Novo email do funcionário")
+        String email,
+
+        @Schema(description = "CPF atualizado")
+        String cpf,
+
+        @Schema(description = "Nova senha (deixe nulo para manter a atual)")
+        String senha
 ) {}

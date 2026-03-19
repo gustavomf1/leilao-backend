@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/fazendas")
+@RequestMapping("/api/fazenda")
 @Tag(name = "Fazendas", description = "Endpoints para gerenciamento de propriedades rurais")
 @CrossOrigin("*")
 public class FazendaController {
@@ -55,5 +55,11 @@ public class FazendaController {
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         service.excluir(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/buscar")
+    @Operation(summary = "Busca fazendas por nome")
+    public ResponseEntity<List<FazendaResponseDTO>> buscarPorNome(@RequestParam String nome) {
+        return ResponseEntity.ok(service.buscarPorNome(nome));
     }
 }
