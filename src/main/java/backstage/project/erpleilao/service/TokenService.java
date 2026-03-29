@@ -8,6 +8,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import backstage.project.erpleilao.entity.PermissaoEntity;
 import backstage.project.erpleilao.entity.RoleEntity;
 
 import java.time.Instant;
@@ -29,6 +30,14 @@ public class TokenService {
                     ? usuario.getUsu_roles().stream().map(RoleEntity::getRole_nome).toList()
                     : List.of();
 
+            List<String> permissoes = usuario.getUsu_roles() != null
+                    ? usuario.getUsu_roles().stream()
+                    .flatMap(r -> r.getPermissoes().stream())
+                    .map(p -> p.getAmbiente().name() + ":" + p.getAcao().name())
+                    .distinct()
+                    .toList()
+                    : List.of();
+
             return JWT.create()
                     .withIssuer("AgroLance-ERP")
                     .withSubject(usuario.getUsu_email())
@@ -36,6 +45,7 @@ public class TokenService {
                     .withClaim("tipo", usuario.getUsu_tipo().name())
                     .withClaim("isAdmin", Boolean.TRUE.equals(usuario.getUsu_is_admin()))
                     .withClaim("roles", roles)
+                    .withClaim("permissoes", permissoes)
                     .withExpiresAt(dataExpiracao())
                     .sign(algoritmo);
         } catch (JWTCreationException exception) {
