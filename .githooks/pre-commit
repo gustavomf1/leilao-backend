@@ -1,0 +1,6 @@
+#!/bin/sh
+branch=$(git symbolic-ref HEAD 2>/dev/null | sed 's|refs/heads/||')
+if [ "$branch" = "main" ]; then
+  echo "❌ Commits diretos na main são proibidos! Use o Gitflow."
+  exit 1
+fi

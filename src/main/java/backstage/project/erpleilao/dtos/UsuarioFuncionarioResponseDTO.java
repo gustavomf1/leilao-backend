@@ -1,9 +1,12 @@
 package backstage.project.erpleilao.dtos;
 
+import backstage.project.erpleilao.entity.RoleEntity;
 import backstage.project.erpleilao.entity.UsuarioEntity;
 import backstage.project.erpleilao.entity.enums.TipoUsuario;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Schema(description = "Dados de retorno do funcionário")
 public record UsuarioFuncionarioResponseDTO(
@@ -26,7 +29,13 @@ public record UsuarioFuncionarioResponseDTO(
         String inativo,
 
         @Schema(description = "Data e hora de criação do registro")
-        LocalDateTime dataCriacao
+        LocalDateTime dataCriacao,
+
+        @Schema(description = "Se o funcionário é administrador")
+        Boolean isAdmin,
+
+        @Schema(description = "Roles atribuídas ao funcionário")
+        List<RoleResponseDTO> roles
 ) {
     public UsuarioFuncionarioResponseDTO(UsuarioEntity usuario) {
         this(
@@ -36,7 +45,11 @@ public record UsuarioFuncionarioResponseDTO(
                 usuario.getUsu_cpf(),
                 usuario.getUsu_tipo(),
                 usuario.getUsu_inativo(),
-                usuario.getUsu_dt_criacao()
+                usuario.getUsu_dt_criacao(),
+                usuario.getUsu_is_admin(),
+                usuario.getUsu_roles() != null
+                        ? usuario.getUsu_roles().stream().map(RoleResponseDTO::new).toList()
+                        : List.of()
         );
     }
 }
