@@ -1,7 +1,10 @@
 package backstage.project.erpleilao.controller;
 
+import backstage.project.erpleilao.config.RequirePermission;
 import backstage.project.erpleilao.dtos.FazendaRequestDTO;
 import backstage.project.erpleilao.dtos.FazendaResponseDTO;
+import backstage.project.erpleilao.entity.enums.Acao;
+import backstage.project.erpleilao.entity.enums.Ambiente;
 import backstage.project.erpleilao.service.FazendaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,6 +27,7 @@ public class FazendaController {
 
     @GetMapping
     @Operation(summary = "Lista todas as fazendas ativas", description = "Retorna apenas fazendas onde inativo = 'N'")
+    @RequirePermission(acao = Acao.VISUALIZAR, ambiente = Ambiente.FAZENDAS)
     public ResponseEntity<List<FazendaResponseDTO>> listar() {
         return ResponseEntity.ok(service.listar());
     }
@@ -32,6 +36,7 @@ public class FazendaController {
     @Operation(summary = "Busca uma fazenda pelo ID", description = "Retorna os detalhes de uma fazenda ativa específica")
     @ApiResponse(responseCode = "200", description = "Fazenda encontrada")
     @ApiResponse(responseCode = "404", description = "Fazenda não encontrada ou inativa")
+    @RequirePermission(acao = Acao.VISUALIZAR, ambiente = Ambiente.FAZENDAS)
     public ResponseEntity<FazendaResponseDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
@@ -39,12 +44,14 @@ public class FazendaController {
     @PostMapping
     @Operation(summary = "Cadastra uma nova fazenda")
     @ApiResponse(responseCode = "201", description = "Fazenda criada com sucesso")
+    @RequirePermission(acao = Acao.CRIAR, ambiente = Ambiente.FAZENDAS)
     public ResponseEntity<FazendaResponseDTO> salvar(@RequestBody FazendaRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.salvar(dto));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualiza uma fazenda existente")
+    @RequirePermission(acao = Acao.EDITAR, ambiente = Ambiente.FAZENDAS)
     public ResponseEntity<FazendaResponseDTO> atualizar(@PathVariable Long id, @RequestBody FazendaRequestDTO dto) {
         return ResponseEntity.ok(service.atualizar(id, dto));
     }
@@ -52,12 +59,14 @@ public class FazendaController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Inativa uma fazenda (Exclusão Lógica)", description = "Altera o status da fazenda para 'S' (Inativo)")
     @ApiResponse(responseCode = "204", description = "Fazenda inativada com sucesso")
+    @RequirePermission(acao = Acao.DELETAR, ambiente = Ambiente.FAZENDAS)
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         service.excluir(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/buscar")
+    @RequirePermission(acao = Acao.VISUALIZAR, ambiente = Ambiente.FAZENDAS)
     @Operation(summary = "Busca fazendas por nome")
     public ResponseEntity<List<FazendaResponseDTO>> buscarPorNome(@RequestParam String nome) {
         return ResponseEntity.ok(service.buscarPorNome(nome));

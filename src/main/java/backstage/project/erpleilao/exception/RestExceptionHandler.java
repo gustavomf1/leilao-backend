@@ -3,6 +3,7 @@ package backstage.project.erpleilao.exception;
 import backstage.project.erpleilao.dtos.ErroResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -17,5 +18,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 System.currentTimeMillis()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErroResponse> handleAccessDeniedException(AccessDeniedException exception) {
+        ErroResponse erro = new ErroResponse(
+                HttpStatus.FORBIDDEN.value(),
+                exception.getMessage(),
+                System.currentTimeMillis()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(erro);
     }
 }

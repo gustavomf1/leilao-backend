@@ -1,6 +1,9 @@
 package backstage.project.erpleilao.controller;
 
+import backstage.project.erpleilao.config.RequirePermission;
 import backstage.project.erpleilao.dtos.*;
+import backstage.project.erpleilao.entity.enums.Acao;
+import backstage.project.erpleilao.entity.enums.Ambiente;
 import backstage.project.erpleilao.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,6 +36,7 @@ public class UsuarioController {
     @Operation(summary = "Cadastra um novo cliente", description = "Cria um registro para pecuaristas (vendedores ou compradores).")
     @ApiResponse(responseCode = "201", description = "Cliente criado com sucesso")
     @PostMapping("/cliente")
+    @RequirePermission(acao = Acao.CRIAR, ambiente = Ambiente.CLIENTES)
     public ResponseEntity<UsuarioClienteResponseDTO> criarCliente(@RequestBody UsuarioClienteDTO dto) {
         UsuarioClienteResponseDTO response = service.salvarCliente(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -40,12 +44,14 @@ public class UsuarioController {
 
     @Operation(summary = "Lista todos os funcionários", description = "Retorna apenas os usuários ativos com perfil FUNCIONARIO.")
     @GetMapping("/funcionario")
+    @RequirePermission(acao = Acao.VISUALIZAR, ambiente = Ambiente.FUNCIONARIOS)
     public ResponseEntity<List<UsuarioFuncionarioResponseDTO>> listarFuncionarios() {
         return ResponseEntity.ok(service.listarFuncionarios());
     }
 
     @Operation(summary = "Lista todos os clientes", description = "Retorna a lista de pecuaristas cadastrados e ativos.")
     @GetMapping("/cliente")
+    @RequirePermission(acao = Acao.VISUALIZAR, ambiente = Ambiente.CLIENTES)
     public ResponseEntity<List<UsuarioClienteResponseDTO>> listarClientes() {
         return ResponseEntity.ok(service.listarClientes());
     }
@@ -56,6 +62,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Funcionário não localizado")
     })
     @GetMapping("/funcionario/{id}")
+    @RequirePermission(acao = Acao.VISUALIZAR, ambiente = Ambiente.FUNCIONARIOS)
     public ResponseEntity<UsuarioFuncionarioResponseDTO> buscarFuncionarioPorId(
             @Parameter(description = "ID único do funcionário", example = "1") @PathVariable Long id) {
         return ResponseEntity.ok(service.buscarFuncionarioPorId(id));
@@ -63,6 +70,7 @@ public class UsuarioController {
 
     @Operation(summary = "Busca cliente por ID")
     @GetMapping("/cliente/{id}")
+    @RequirePermission(acao = Acao.VISUALIZAR, ambiente = Ambiente.CLIENTES)
     public ResponseEntity<UsuarioClienteResponseDTO> buscarClientePorId(
             @Parameter(description = "ID único do cliente", example = "5") @PathVariable Long id) {
         return ResponseEntity.ok(service.buscarClientePorId(id));
@@ -70,6 +78,7 @@ public class UsuarioController {
 
     @Operation(summary = "Atualiza dados de um funcionário")
     @PutMapping("/funcionario/{id}")
+    @RequirePermission(acao = Acao.EDITAR, ambiente = Ambiente.FUNCIONARIOS)
     public ResponseEntity<UsuarioFuncionarioResponseDTO> atualizarFuncionario(
             @PathVariable Long id,
             @RequestBody UsuarioFuncionarioUpdateDTO dto) {
@@ -78,6 +87,7 @@ public class UsuarioController {
 
     @Operation(summary = "Atualiza dados de um cliente")
     @PutMapping("/cliente/{id}")
+    @RequirePermission(acao = Acao.EDITAR, ambiente = Ambiente.CLIENTES)
     public ResponseEntity<UsuarioClienteResponseDTO> atualizarCliente(
             @PathVariable Long id,
             @RequestBody UsuarioClienteUpdateDTO dto) {
@@ -90,6 +100,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     })
     @DeleteMapping("inativar/{id}")
+    @RequirePermission(acao = Acao.DELETAR, ambiente = Ambiente.FUNCIONARIOS)
     public ResponseEntity<Void> inativarUsuario(@PathVariable Long id) {
         service.inativarUsuario(id);
         return ResponseEntity.noContent().build();
@@ -97,6 +108,7 @@ public class UsuarioController {
 
     @Operation(summary = "Busca clientes por nome")
     @GetMapping("/cliente/buscar")
+    @RequirePermission(acao = Acao.VISUALIZAR, ambiente = Ambiente.CLIENTES)
     public ResponseEntity<List<UsuarioClienteResponseDTO>> buscarPorNome(@RequestParam String nome) {
         return ResponseEntity.ok(service.buscarClientesPorNome(nome));
     }

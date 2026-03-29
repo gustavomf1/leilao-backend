@@ -1,11 +1,11 @@
 package backstage.project.erpleilao.service;
 
-import backstage.project.erpleilao.dtos.AtribuirRolesDTO;
-import backstage.project.erpleilao.dtos.RoleRequestDTO;
-import backstage.project.erpleilao.dtos.RoleResponseDTO;
-import backstage.project.erpleilao.dtos.UsuarioFuncionarioResponseDTO;
+import backstage.project.erpleilao.dtos.*;
+import backstage.project.erpleilao.entity.PermissaoEntity;
 import backstage.project.erpleilao.entity.RoleEntity;
 import backstage.project.erpleilao.entity.UsuarioEntity;
+import backstage.project.erpleilao.entity.enums.Acao;
+import backstage.project.erpleilao.entity.enums.Ambiente;
 import backstage.project.erpleilao.entity.enums.TipoUsuario;
 import backstage.project.erpleilao.repository.RoleRepository;
 import backstage.project.erpleilao.repository.UsuarioRepository;
@@ -35,6 +35,7 @@ public class RoleService {
         RoleEntity role = new RoleEntity();
         role.setRole_nome(dto.nome());
         role.setRole_descricao(dto.descricao());
+        aplicarPermissoes(role, dto.permissoes());
 
         RoleEntity salva = roleRepository.save(role);
         return new RoleResponseDTO(salva);
@@ -60,8 +61,9 @@ public class RoleService {
 
         if (dto.nome() != null) role.setRole_nome(dto.nome());
         if (dto.descricao() != null) role.setRole_descricao(dto.descricao());
+        aplicarPermissoes(role, dto.permissoes());
 
-        return new RoleResponseDTO(role);
+        return new RoleResponseDTO(roleRepository.save(role));
     }
 
     @Transactional
@@ -88,5 +90,18 @@ public class RoleService {
         }
 
         return new UsuarioFuncionarioResponseDTO(funcionario);
+    }
+
+    private void aplicarPermissoes(RoleEntity role, java.util.List<PermissaoDTO> permissoes) {
+        role.getPermissoes().clear();
+        if (permissoes != null) {
+            for (PermissaoDTO p : permissoes) {
+                PermissaoEntity pe = new PermissaoEntity();
+                pe.setRole(role);
+                pe.setAcao(Acao.valueOf(p.acao()));
+                pe.setAmbiente(Ambiente.valueOf(p.ambiente()));
+                role.getPermissoes().add(pe);
+            }
+        }
     }
 }
