@@ -65,6 +65,9 @@ public class UsuarioEntity implements UserDetails {
     @OneToMany(mappedBy = "faz_titular", cascade = CascadeType.ALL)
     private List<FazendaEntity> usu_fazendaEntities;
 
+    @OneToMany(mappedBy = "pix_usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PixEntity> usu_pixKeys;
+
     @Column(name = "usu_dt_criacao", nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime usu_dt_criacao;

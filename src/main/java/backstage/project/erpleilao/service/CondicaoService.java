@@ -35,8 +35,7 @@ public class CondicaoService {
     @Transactional
     public CondicaoResponseDTO salvar(CondicaoRequestDTO dto) {
         CondicaoEntity condicaoEntity = new CondicaoEntity();
-        condicaoEntity.setTipo(dto.tipo());
-        condicaoEntity.setDescricao(dto.descricao());
+        mapDtoToEntity(dto, condicaoEntity);
         condicaoEntity.setInativo("N");
         return convertToResponseDTO(repository.save(condicaoEntity));
     }
@@ -45,8 +44,7 @@ public class CondicaoService {
     public CondicaoResponseDTO atualizar(Long id, CondicaoRequestDTO dto) {
         CondicaoEntity condicaoEntity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Condição não encontrada"));
-        condicaoEntity.setTipo(dto.tipo());
-        condicaoEntity.setDescricao(dto.descricao());
+        mapDtoToEntity(dto, condicaoEntity);
         return convertToResponseDTO(repository.save(condicaoEntity));
     }
 
@@ -58,11 +56,30 @@ public class CondicaoService {
         repository.save(condicaoEntity);
     }
 
+    private void mapDtoToEntity(CondicaoRequestDTO dto, CondicaoEntity entity) {
+        entity.setDescricao(dto.descricao());
+        entity.setCaptacao(dto.captacao());
+        entity.setParcelas(dto.parcelas());
+        entity.setQtdDias(dto.qtdDias());
+        entity.setPercentualDesconto(dto.percentualDesconto());
+        entity.setComEntrada(dto.comEntrada());
+        entity.setMesmoDia(dto.mesmoDia());
+        entity.setTipoCondicao(dto.tipoCondicao());
+        entity.setAceiteIntegrado(dto.aceiteIntegrado());
+    }
+
     private CondicaoResponseDTO convertToResponseDTO(CondicaoEntity condicaoEntity) {
         return new CondicaoResponseDTO(
                 condicaoEntity.getId(),
-                condicaoEntity.getTipo(),
                 condicaoEntity.getDescricao(),
+                condicaoEntity.getCaptacao(),
+                condicaoEntity.getParcelas(),
+                condicaoEntity.getQtdDias(),
+                condicaoEntity.getPercentualDesconto(),
+                condicaoEntity.getComEntrada(),
+                condicaoEntity.getMesmoDia(),
+                condicaoEntity.getTipoCondicao(),
+                condicaoEntity.getAceiteIntegrado(),
                 condicaoEntity.getInativo()
         );
     }
