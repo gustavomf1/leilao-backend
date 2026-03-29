@@ -8,9 +8,12 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import backstage.project.erpleilao.entity.RoleEntity;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
 @Service
 public class TokenService {
@@ -22,9 +25,17 @@ public class TokenService {
         try {
             Algorithm algoritmo = Algorithm.HMAC256(secret);
 
+            List<String> roles = usuario.getUsu_roles() != null
+                    ? usuario.getUsu_roles().stream().map(RoleEntity::getRole_nome).toList()
+                    : List.of();
+
             return JWT.create()
                     .withIssuer("AgroLance-ERP")
                     .withSubject(usuario.getUsu_email())
+                    .withClaim("nome", usuario.getUsu_nome())
+                    .withClaim("tipo", usuario.getUsu_tipo().name())
+                    .withClaim("isAdmin", Boolean.TRUE.equals(usuario.getUsu_is_admin()))
+                    .withClaim("roles", roles)
                     .withExpiresAt(dataExpiracao())
                     .sign(algoritmo);
         } catch (JWTCreationException exception) {

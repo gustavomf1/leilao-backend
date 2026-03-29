@@ -12,8 +12,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @Table(name = "usuarios")
@@ -48,6 +51,17 @@ public class UsuarioEntity implements UserDetails {
     private String usu_uf;
     private String usu_rg;
 
+    @Column(name = "usu_is_admin", nullable = false)
+    private Boolean usu_is_admin = false;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "usuario_roles",
+        joinColumns = @JoinColumn(name = "usuario_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<RoleEntity> usu_roles = new HashSet<>();
+
     @OneToMany(mappedBy = "faz_titular", cascade = CascadeType.ALL)
     private List<FazendaEntity> usu_fazendaEntities;
 
@@ -57,7 +71,20 @@ public class UsuarioEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + this.usu_tipo.name()));
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.usu_tipo.name()));
+
+        if (Boolean.TRUE.equals(this.usu_is_admin)) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        }
+
+        if (this.usu_roles != null) {
+            for (RoleEntity role : this.usu_roles) {
+                authorities.add(new SimpleGrantedAuthority(role.getRole_nome()));
+            }
+        }
+
+        return authorities;
     }
 
     @Override
