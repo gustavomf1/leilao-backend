@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 
 public record TaxaResponseDTO(
         Long id,
-        BigDecimal porcentagem,
-        String tipoCliente,
+        BigDecimal comissaoVendedor,
+        BigDecimal comissaoComprador,
+        String especie,
+        String tipoLeilao,
         String inativo
 ) {}

@@ -34,8 +34,10 @@ public class TaxaComissaoService {
     @Transactional
     public TaxaResponseDTO salvar(TaxaRequestDTO dto) {
         TaxaComissaoEntity taxa = new TaxaComissaoEntity();
-        taxa.setPorcentagem(dto.porcentagem());
-        taxa.setTipoCliente(dto.tipoCliente());
+        taxa.setComissaoVendedor(dto.comissaoVendedor());
+        taxa.setComissaoComprador(dto.comissaoComprador());
+        taxa.setEspecie(dto.especie());
+        taxa.setTipoLeilao(dto.tipoLeilao());
         taxa.setInativo("N");
         return convertToResponseDTO(repository.save(taxa));
     }
@@ -44,8 +46,10 @@ public class TaxaComissaoService {
     public TaxaResponseDTO atualizar(Long id, TaxaRequestDTO dto) {
         TaxaComissaoEntity taxa = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Taxa não encontrada"));
-        taxa.setPorcentagem(dto.porcentagem());
-        taxa.setTipoCliente(dto.tipoCliente());
+        taxa.setComissaoVendedor(dto.comissaoVendedor());
+        taxa.setComissaoComprador(dto.comissaoComprador());
+        taxa.setEspecie(dto.especie());
+        taxa.setTipoLeilao(dto.tipoLeilao());
         return convertToResponseDTO(repository.save(taxa));
     }
 
@@ -60,8 +64,10 @@ public class TaxaComissaoService {
     private TaxaResponseDTO convertToResponseDTO(TaxaComissaoEntity taxa) {
         return new TaxaResponseDTO(
                 taxa.getId(),
-                taxa.getPorcentagem(),
-                taxa.getTipoCliente(),
+                taxa.getComissaoVendedor(),
+                taxa.getComissaoComprador(),
+                taxa.getEspecie(),
+                taxa.getTipoLeilao(),
                 taxa.getInativo()
         );
     }
