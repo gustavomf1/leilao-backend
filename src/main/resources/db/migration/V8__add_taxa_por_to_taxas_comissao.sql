@@ -1,0 +1,2 @@
+ALTER TABLE taxas_comissao
+    ADD COLUMN IF NOT EXISTS tax_taxa_por VARCHAR(10) NOT NULL DEFAULT 'ANIMAL';
