@@ -8,6 +8,7 @@ public enum Ambiente {
     LEILOES,
     CONDICOES,
     TAXAS,
+    ESPECIES,
     LOTES,
     WHATSAPP
 }
