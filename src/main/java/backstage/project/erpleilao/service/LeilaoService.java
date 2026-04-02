@@ -54,13 +54,21 @@ public class LeilaoService {
         leilao.setDescricao(dto.descricao());
         leilao.setData(dto.data());
 
-        CondicaoEntity condicoes = condicoesRepository.findById(dto.condicoesId())
-                .orElseThrow(() -> new RuntimeException("Condição não encontrada"));
-        leilao.setCondicao(condicoes);
+        if (dto.condicoesId() != null) {
+            CondicaoEntity condicoes = condicoesRepository.findById(dto.condicoesId())
+                    .orElseThrow(() -> new RuntimeException("Condição não encontrada"));
+            leilao.setCondicao(condicoes);
+        } else {
+            leilao.setCondicao(null);
+        }
 
-        TaxaComissaoEntity taxas = taxasRepository.findById(dto.taxasId())
-                .orElseThrow(() -> new RuntimeException("Taxa não encontrada"));
-        leilao.setTaxa(taxas);
+        if (dto.taxasId() != null) {
+            TaxaComissaoEntity taxas = taxasRepository.findById(dto.taxasId())
+                    .orElseThrow(() -> new RuntimeException("Taxa não encontrada"));
+            leilao.setTaxa(taxas);
+        } else {
+            leilao.setTaxa(null);
+        }
 
         return leilaoRepository.save(leilao);
     }

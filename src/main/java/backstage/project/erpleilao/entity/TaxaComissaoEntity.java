@@ -25,7 +25,7 @@ public class TaxaComissaoEntity {
     @Column(name = "tax_comissao_comprador", nullable = false, precision = 5, scale = 2)
     private BigDecimal comissaoComprador;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tax_especie_id", nullable = false)
     private EspecieEntity especie;
 
