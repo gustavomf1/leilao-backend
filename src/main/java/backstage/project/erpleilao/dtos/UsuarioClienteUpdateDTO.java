@@ -6,6 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record UsuarioClienteUpdateDTO(
         @Schema(description = "Nome completo do cliente", example = "Gustavo Martins")
         String nome,
+        @Schema(description = "E-mail do cliente", example = "gustavo@email.com")
+        String email,
+        @Schema(description = "CPF do cliente", example = "12345678901")
+        String cpf,
         @Schema(description = "Telefone de contato com DDD", example = "18991234567")
         String telefone,
         @Schema(description = "Cidade de residência", example = "Regente Feijó")

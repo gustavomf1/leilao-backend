@@ -120,12 +120,14 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado."));
 
         if (dto.nome() != null)     cliente.setUsu_nome(dto.nome());
+        if (dto.email() != null)    cliente.setUsu_email(dto.email());
+        if (dto.cpf() != null)      cliente.setUsu_cpf(dto.cpf());
         if (dto.telefone() != null) cliente.setUsu_telefone(dto.telefone());
         if (dto.cidade() != null)   cliente.setUsu_cidade(dto.cidade());
         if (dto.uf() != null)       cliente.setUsu_uf(dto.uf());
         if (dto.rg() != null)       cliente.setUsu_rg(dto.rg());
 
-        return new UsuarioClienteResponseDTO(cliente);
+        return new UsuarioClienteResponseDTO(repository.save(cliente));
     }
 
     @Transactional
