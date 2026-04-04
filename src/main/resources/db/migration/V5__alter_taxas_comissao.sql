@@ -1,0 +1,7 @@
+ALTER TABLE taxas_comissao
+    DROP COLUMN IF EXISTS tax_porcentagem,
+    DROP COLUMN IF EXISTS tax_tipo_cliente,
+    ADD COLUMN IF NOT EXISTS tax_comissao_vendedor NUMERIC(5, 2) NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS tax_comissao_comprador NUMERIC(5, 2) NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS tax_especie VARCHAR(20) NOT NULL DEFAULT 'BOVINOS',
+    ADD COLUMN IF NOT EXISTS tax_tipo_leilao VARCHAR(20) NOT NULL DEFAULT 'CORTE';

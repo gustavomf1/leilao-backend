@@ -1,6 +1,9 @@
 package backstage.project.erpleilao.controller;
 
+import backstage.project.erpleilao.config.RequirePermission;
 import backstage.project.erpleilao.dtos.*;
+import backstage.project.erpleilao.entity.enums.Acao;
+import backstage.project.erpleilao.entity.enums.Ambiente;
 import backstage.project.erpleilao.service.MessageSenderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -57,6 +60,7 @@ public class SendMessageController {
             )
     })
     @PostMapping("/send/text")
+    @RequirePermission(acao = Acao.CRIAR, ambiente = Ambiente.WHATSAPP)
     public ResponseEntity<ApiResponseDTO<EvolutionResponseDTO>> sendText(
             @RequestBody(
                     description = "Dados da mensagem de texto a ser enviada",
@@ -99,6 +103,7 @@ public class SendMessageController {
             )
     })
     @PostMapping("/send/media")
+    @RequirePermission(acao = Acao.CRIAR, ambiente = Ambiente.WHATSAPP)
     public ResponseEntity<ApiResponseDTO<EvolutionResponseDTO>> sendMedia(
             @RequestBody(
                     description = "Dados da mensagem com mídia a ser enviada",
@@ -144,6 +149,7 @@ public class SendMessageController {
             )
     })
     @PostMapping("/send/bulk")
+    @RequirePermission(acao = Acao.CRIAR, ambiente = Ambiente.WHATSAPP)
     public ResponseEntity<ApiResponseDTO<String>> sendBulk(
             @RequestBody(
                     description = "Lista de contatos e configurações do envio em massa de texto",
@@ -190,6 +196,7 @@ public class SendMessageController {
             )
     })
     @PostMapping("/send/bulk/media")
+    @RequirePermission(acao = Acao.CRIAR, ambiente = Ambiente.WHATSAPP)
     public ResponseEntity<ApiResponseDTO<String>> sendBulkMedia(
             @RequestBody(
                     description = "Lista de contatos e configurações do envio em massa de mídia",

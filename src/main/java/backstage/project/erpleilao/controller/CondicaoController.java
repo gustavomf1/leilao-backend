@@ -1,7 +1,10 @@
 package backstage.project.erpleilao.controller;
 
+import backstage.project.erpleilao.config.RequirePermission;
 import backstage.project.erpleilao.dtos.CondicaoRequestDTO;
 import backstage.project.erpleilao.dtos.CondicaoResponseDTO;
+import backstage.project.erpleilao.entity.enums.Acao;
+import backstage.project.erpleilao.entity.enums.Ambiente;
 import backstage.project.erpleilao.service.CondicaoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,30 +25,35 @@ public class CondicaoController {
 
     @GetMapping
     @Operation(summary = "Lista todas as condições ativas")
+    @RequirePermission(acao = Acao.VISUALIZAR, ambiente = Ambiente.CONDICOES)
     public ResponseEntity<List<CondicaoResponseDTO>> listar() {
         return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Busca uma condição por ID")
+    @RequirePermission(acao = Acao.VISUALIZAR, ambiente = Ambiente.CONDICOES)
     public ResponseEntity<CondicaoResponseDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
 
     @PostMapping
     @Operation(summary = "Cadastra uma nova condição")
+    @RequirePermission(acao = Acao.CRIAR, ambiente = Ambiente.CONDICOES)
     public ResponseEntity<CondicaoResponseDTO> salvar(@RequestBody CondicaoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.salvar(dto));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualiza uma condição existente")
+    @RequirePermission(acao = Acao.EDITAR, ambiente = Ambiente.CONDICOES)
     public ResponseEntity<CondicaoResponseDTO> atualizar(@PathVariable Long id, @RequestBody CondicaoRequestDTO dto) {
         return ResponseEntity.ok(service.atualizar(id, dto));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Inativa uma condição (Exclusão Lógica)")
+    @RequirePermission(acao = Acao.DELETAR, ambiente = Ambiente.CONDICOES)
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         service.excluir(id);
         return ResponseEntity.noContent().build();
