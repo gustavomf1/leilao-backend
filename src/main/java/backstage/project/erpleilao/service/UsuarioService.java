@@ -36,6 +36,10 @@ public class UsuarioService {
         funcionario.setUsu_tipo(TipoUsuario.FUNCIONARIO);
         funcionario.setUsu_inativo("N");
 
+        if (!repository.existsFuncionario()) {
+            funcionario.setUsu_is_admin(true);
+        }
+
         String senhaCriptografada = passwordEncoder.encode(dto.senha());
         funcionario.setUsu_senha(senhaCriptografada);
 
