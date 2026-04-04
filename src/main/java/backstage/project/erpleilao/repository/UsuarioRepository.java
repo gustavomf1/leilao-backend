@@ -24,6 +24,9 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Long> {
     @Query("SELECT u FROM UsuarioEntity u WHERE u.usu_email = :email")
     UserDetails findByUsuEmail(@Param("email") String email);
 
+    @Query("SELECT COUNT(u) > 0 FROM UsuarioEntity u WHERE u.usu_tipo = 'FUNCIONARIO'")
+    boolean existsFuncionario();
+
     @Query("SELECT u FROM UsuarioEntity u WHERE u.usu_tipo = :tipo AND LOWER(u.usu_nome) LIKE LOWER(CONCAT('%', :nome, '%')) AND u.usu_inativo = 'N'")
     List<UsuarioEntity> findByTipoAndNomeContaining(@Param("tipo") TipoUsuario tipo, @Param("nome") String nome);
 }

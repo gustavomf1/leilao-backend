@@ -66,5 +66,5 @@ JWT-based auth via `SecurityFilter` (pre-request filter). Public endpoints are c
 
 - DTOs are used for all controller input/output — entities are never exposed directly.
 - `application.properties` holds all environment config (DB, JWT secret, Redis, Evolution API URL). No `.env` file.
-- Schema is managed via `spring.jpa.hibernate.ddl-auto=update` — no migration tool (Flyway/Liquibase).
+- Schema is managed via **Flyway** migrations in `src/main/resources/db/migration/` (naming: `V<n>__description.sql`). Hibernate is set to `ddl-auto=validate` — it verifies the schema but never modifies it.
 - Swagger UI available at `/swagger-ui.html` (via SpringDoc OpenAPI 2.8.5).
