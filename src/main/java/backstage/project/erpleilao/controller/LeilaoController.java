@@ -2,6 +2,7 @@ package backstage.project.erpleilao.controller;
 
 import backstage.project.erpleilao.config.RequirePermission;
 import backstage.project.erpleilao.dtos.LeilaoDTO;
+import backstage.project.erpleilao.dtos.LeilaoResumoDTO;
 import backstage.project.erpleilao.entity.LeilaoEntity;
 import backstage.project.erpleilao.entity.enums.Acao;
 import backstage.project.erpleilao.entity.enums.Ambiente;
@@ -80,6 +81,13 @@ public class LeilaoController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(leilaoService.buscarPorId(id));
+    }
+
+    @GetMapping("/{id}/resumo")
+    @Operation(summary = "Buscar resumo do leilão", description = "Retorna detalhes do leilão com lotes vendidos, restantes e faturamento")
+    @RequirePermission(acao = Acao.VISUALIZAR, ambiente = Ambiente.LEILOES)
+    public ResponseEntity<LeilaoResumoDTO> buscarResumo(@PathVariable Long id) {
+        return ResponseEntity.ok(leilaoService.buscarResumo(id));
     }
 
     @PostMapping
