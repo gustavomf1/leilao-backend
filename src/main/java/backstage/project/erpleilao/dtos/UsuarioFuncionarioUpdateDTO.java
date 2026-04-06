@@ -18,5 +18,8 @@ public record UsuarioFuncionarioUpdateDTO(
         String cpf,
 
         @Schema(description = "Nova senha (deixe nulo para manter a atual)")
-        String senha
+        String senha,
+
+        @Schema(description = "Atualiza flag de manejo de campo")
+        Boolean isManejo
 ) {}

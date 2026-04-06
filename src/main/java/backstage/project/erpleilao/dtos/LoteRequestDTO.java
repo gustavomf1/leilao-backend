@@ -31,15 +31,18 @@ public record LoteRequestDTO(
         @Schema(example = "Animais vacinados e prontos para engorda", description = "Observações gerais")
         String obs,
 
-        @Schema(example = "5500.00", description = "Preço de compra ou lance inicial")
+        @Schema(example = "Zezin da Fazenda Boa Vista", description = "Nome informal do vendedor (preenchido pelo manejo)")
+        String vendedorNomeRascunho,
+
+        @Schema(example = "5500.00", description = "Preço de compra (preenchido pelo responsável de preço, não pelo manejo)")
         BigDecimal precoCompra,
 
-        @Schema(example = "1", description = "ID do leilão")
+        @Schema(example = "1", description = "ID do leilão (opcional)")
         Long leilaoId,
 
-        @Schema(example = "1", description = "ID do usuário vendedor")
+        @Schema(example = "1", description = "ID do usuário vendedor (vinculado pelo escritório)")
         Long vendedorId,
 
-        @Schema(example = "null", description = "ID do usuário comprador (opcional no cadastro)")
+        @Schema(example = "null", description = "ID do usuário comprador (preenchido ao finalizar o leilão)")
         Long compradorId
 ) {}

@@ -29,22 +29,14 @@ public class LoteController {
     @Operation(summary = "Cadastra um novo lote", description = "Cria um lote e dispara notificação via Redis/WebSocket")
     @RequirePermission(acao = Acao.CRIAR, ambiente = Ambiente.LOTES)
     public ResponseEntity<LoteDisplayDTO> cadastrar(@RequestBody @Valid LoteRequestDTO dados) {
-        var novoLote = service.cadastrar(dados);
-        return ResponseEntity.ok(novoLote);
+        return ResponseEntity.ok(service.cadastrar(dados));
     }
 
     @GetMapping
-    @Operation(summary = "Lista todos os lotes", description = "Retorna todos os lotes cadastrados no sistema")
+    @Operation(summary = "Lista todos os lotes")
     @RequirePermission(acao = Acao.VISUALIZAR, ambiente = Ambiente.LOTES)
     public ResponseEntity<List<LoteDisplayDTO>> listarTodos() {
         return ResponseEntity.ok(service.listarTodos());
-    }
-
-    @PutMapping("/{id}")
-    @Operation(summary = "Atualiza um lote", security = {@SecurityRequirement(name = "bearer-key")})
-    @RequirePermission(acao = Acao.EDITAR, ambiente = Ambiente.LOTES)
-    public ResponseEntity<LoteDisplayDTO> atualizar(@PathVariable Long id, @RequestBody @Valid LoteRequestDTO dados) {
-        return ResponseEntity.ok(service.atualizar(id, dados));
     }
 
     @GetMapping("/{id}")
@@ -54,6 +46,35 @@ public class LoteController {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
 
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualiza um lote", security = {@SecurityRequirement(name = "bearer-key")})
+    @RequirePermission(acao = Acao.EDITAR, ambiente = Ambiente.LOTES)
+    public ResponseEntity<LoteDisplayDTO> atualizar(@PathVariable Long id, @RequestBody @Valid LoteRequestDTO dados) {
+        return ResponseEntity.ok(service.atualizar(id, dados));
+    }
+
+    @PatchMapping("/{id}/preco")
+    @Operation(summary = "Registra o valor do lance e finaliza o lote (AGUARDANDO_LANCE → FINALIZADO)",
+               security = {@SecurityRequirement(name = "bearer-key")})
+    @RequirePermission(acao = Acao.EDITAR, ambiente = Ambiente.LOTES)
+    public ResponseEntity<LoteDisplayDTO> registrarPreco(
+            @PathVariable Long id,
+            @RequestBody java.util.Map<String, java.math.BigDecimal> body) {
+        return ResponseEntity.ok(service.registrarPreco(id, body.get("precoCompra")));
+    }
+
+    /**
+     * Avança o lote para o próximo status no fluxo:
+     * AGUARDANDO_ESCRITORIO → AGUARDANDO_LANCE → (via /preco) → FINALIZADO
+     */
+    @PatchMapping("/{id}/status/avancar")
+    @Operation(summary = "Avança o status do lote", description = "Progressão: AGUARDANDO_ESCRITORIO → AGUARDANDO_LANCE → (PATCH /preco) → FINALIZADO",
+               security = {@SecurityRequirement(name = "bearer-key")})
+    @RequirePermission(acao = Acao.EDITAR, ambiente = Ambiente.LOTES)
+    public ResponseEntity<LoteDisplayDTO> avancarStatus(@PathVariable Long id) {
+        return ResponseEntity.ok(service.avancarStatus(id));
+    }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Deleta um lote", security = {@SecurityRequirement(name = "bearer-key")})
     @RequirePermission(acao = Acao.DELETAR, ambiente = Ambiente.LOTES)
@@ -61,5 +82,4 @@ public class LoteController {
         service.deletar(id);
         return ResponseEntity.noContent().build();
     }
-
 }

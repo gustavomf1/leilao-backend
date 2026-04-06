@@ -3,14 +3,15 @@ package backstage.project.erpleilao.service;
 import backstage.project.erpleilao.dtos.LoteDisplayDTO;
 import backstage.project.erpleilao.dtos.LoteRequestDTO;
 import backstage.project.erpleilao.entity.LoteEntity;
+import backstage.project.erpleilao.entity.enums.StatusLote;
 import backstage.project.erpleilao.repository.LeilaoRepository;
 import backstage.project.erpleilao.repository.LoteRepository;
 import backstage.project.erpleilao.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate; // MUDANÇA AQUI
-import org.springframework.data.redis.listener.ChannelTopic; // MUDANÇA AQUI
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,12 +36,6 @@ public class LoteService {
 
     @Transactional
     public LoteDisplayDTO cadastrar(LoteRequestDTO dados) {
-        var vendedor = usuarioRepository.findById(dados.vendedorId())
-                .orElseThrow(() -> new EntityNotFoundException("Vendedor não encontrado"));
-
-        var comprador = dados.compradorId() != null ?
-                usuarioRepository.findById(dados.compradorId()).orElse(null) : null;
-
         var lote = new LoteEntity();
         lote.setCodigo(dados.codigo());
         lote.setQntdAnimais(dados.qntdAnimais());
@@ -51,7 +46,24 @@ public class LoteService {
         lote.setEspecie(dados.especie());
         lote.setCategoriaAnimal(dados.categoriaAnimal());
         lote.setObs(dados.obs());
-        lote.setPrecoCompra(dados.precoCompra());
+        lote.setVendedorNomeRascunho(dados.vendedorNomeRascunho());
+
+        // Preço é opcional — manejo não preenche
+        if (dados.precoCompra() != null) {
+            lote.setPrecoCompra(dados.precoCompra());
+        }
+
+        // Vendedor por ID é opcional — escritório vincula depois
+        if (dados.vendedorId() != null) {
+            var vendedor = usuarioRepository.findById(dados.vendedorId())
+                    .orElseThrow(() -> new EntityNotFoundException("Vendedor não encontrado"));
+            lote.setVendedor(vendedor);
+        }
+
+        if (dados.compradorId() != null) {
+            var comprador = usuarioRepository.findById(dados.compradorId()).orElse(null);
+            lote.setComprador(comprador);
+        }
 
         if (dados.leilaoId() != null) {
             var leilao = leilaoRepository.findById(dados.leilaoId())
@@ -59,16 +71,13 @@ public class LoteService {
             lote.setLeilao(leilao);
         }
 
-        lote.setVendedor(vendedor);
-        lote.setComprador(comprador);
+        // Manejo sempre cria em AGUARDANDO_ESCRITORIO — preço é preenchido após o lance
+        lote.setStatus(StatusLote.AGUARDANDO_ESCRITORIO);
 
         var loteSalvo = repository.save(lote);
-
-        var displayDto = new LoteDisplayDTO(loteSalvo);
-
-        redisTemplate.convertAndSend(topic.getTopic(), displayDto);
-
-        return displayDto;
+        var dto = new LoteDisplayDTO(loteSalvo);
+        redisTemplate.convertAndSend(topic.getTopic(), dto);
+        return dto;
     }
 
     public List<LoteDisplayDTO> listarTodos() {
@@ -89,12 +98,6 @@ public class LoteService {
         var lote = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Lote não encontrado"));
 
-        var vendedor = usuarioRepository.findById(dados.vendedorId())
-                .orElseThrow(() -> new EntityNotFoundException("Vendedor não encontrado"));
-
-        var comprador = dados.compradorId() != null ?
-                usuarioRepository.findById(dados.compradorId()).orElse(null) : null;
-
         lote.setCodigo(dados.codigo());
         lote.setQntdAnimais(dados.qntdAnimais());
         lote.setSexo(dados.sexo());
@@ -104,17 +107,65 @@ public class LoteService {
         lote.setEspecie(dados.especie());
         lote.setCategoriaAnimal(dados.categoriaAnimal());
         lote.setObs(dados.obs());
-        lote.setPrecoCompra(dados.precoCompra());
+        lote.setVendedorNomeRascunho(dados.vendedorNomeRascunho());
+
+        if (dados.precoCompra() != null) {
+            lote.setPrecoCompra(dados.precoCompra());
+        }
+
+        if (dados.vendedorId() != null) {
+            var vendedor = usuarioRepository.findById(dados.vendedorId())
+                    .orElseThrow(() -> new EntityNotFoundException("Vendedor não encontrado"));
+            lote.setVendedor(vendedor);
+        }
+
+        if (dados.compradorId() != null) {
+            lote.setComprador(usuarioRepository.findById(dados.compradorId()).orElse(null));
+        }
+
         if (dados.leilaoId() != null) {
             var leilao = leilaoRepository.findById(dados.leilaoId())
                     .orElseThrow(() -> new EntityNotFoundException("Leilão não encontrado"));
             lote.setLeilao(leilao);
         }
 
-        lote.setVendedor(vendedor);
-        lote.setComprador(comprador);
+        var dto = new LoteDisplayDTO(lote);
+        redisTemplate.convertAndSend(topic.getTopic(), dto);
+        return dto;
+    }
 
-        return new LoteDisplayDTO(lote);
+    @Transactional
+    public LoteDisplayDTO registrarPreco(Long id, java.math.BigDecimal preco) {
+        var lote = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Lote não encontrado"));
+
+        if (lote.getStatus() != StatusLote.AGUARDANDO_LANCE) {
+            throw new IllegalStateException("Valor do lance só pode ser registrado quando o lote está em AGUARDANDO_LANCE");
+        }
+
+        lote.setPrecoCompra(preco);
+        lote.setStatus(StatusLote.FINALIZADO);
+
+        var dto = new LoteDisplayDTO(lote);
+        redisTemplate.convertAndSend(topic.getTopic(), dto);
+        return dto;
+    }
+
+    @Transactional
+    public LoteDisplayDTO avancarStatus(Long id) {
+        var lote = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Lote não encontrado"));
+
+        StatusLote novoStatus = switch (lote.getStatus()) {
+            case AGUARDANDO_ESCRITORIO -> StatusLote.AGUARDANDO_LANCE;
+            case AGUARDANDO_LANCE      -> throw new IllegalStateException("Use o endpoint de preço para finalizar o lote (PATCH /{id}/preco)");
+            case FINALIZADO            -> throw new IllegalStateException("Lote já está finalizado");
+        };
+
+        lote.setStatus(novoStatus);
+        var dto = new LoteDisplayDTO(lote);
+        redisTemplate.convertAndSend(topic.getTopic(), dto);
+        return dto;
     }
 
     @Transactional
@@ -124,4 +175,5 @@ public class LoteService {
         }
         repository.deleteById(id);
     }
+
 }

@@ -1,6 +1,7 @@
 package backstage.project.erpleilao.dtos;
 
 import backstage.project.erpleilao.entity.LoteEntity;
+import backstage.project.erpleilao.entity.enums.StatusLote;
 
 import java.math.BigDecimal;
 
@@ -19,7 +20,9 @@ public record LoteDisplayDTO(
         Long vendedorId,
         Long compradorId,
         Double precoCompra,
-        String vendedorNome
+        String vendedorNome,
+        String vendedorNomeRascunho,
+        StatusLote status
 ) {
     public LoteDisplayDTO(LoteEntity lote) {
         this(
@@ -33,11 +36,13 @@ public record LoteDisplayDTO(
                 lote.getEspecie(),
                 lote.getCategoriaAnimal(),
                 lote.getObs(),
-                lote.getLeilao() != null ? lote.getLeilao().getId() : null,
-                lote.getVendedor() != null ? lote.getVendedor().getUsu_id() : null,
-                lote.getComprador() != null ? lote.getComprador().getUsu_id() : null,
+                lote.getLeilao()    != null ? lote.getLeilao().getId()           : null,
+                lote.getVendedor()  != null ? lote.getVendedor().getUsu_id()     : null,
+                lote.getComprador() != null ? lote.getComprador().getUsu_id()    : null,
                 lote.getPrecoCompra() != null ? lote.getPrecoCompra().doubleValue() : null,
-                lote.getVendedor() != null ? lote.getVendedor().getUsu_nome() : "Vendedor não informado"
+                lote.getVendedor()  != null ? lote.getVendedor().getUsu_nome()   : null,
+                lote.getVendedorNomeRascunho(),
+                lote.getStatus()
         );
     }
 }

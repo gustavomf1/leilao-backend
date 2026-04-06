@@ -35,7 +35,10 @@ public record UsuarioFuncionarioResponseDTO(
         Boolean isAdmin,
 
         @Schema(description = "Roles atribuídas ao funcionário")
-        List<RoleResponseDTO> roles
+        List<RoleResponseDTO> roles,
+
+        @Schema(description = "Se o funcionário é do time de manejo de campo")
+        Boolean isManejo
 ) {
     public UsuarioFuncionarioResponseDTO(UsuarioEntity usuario) {
         this(
@@ -49,7 +52,8 @@ public record UsuarioFuncionarioResponseDTO(
                 usuario.getUsu_is_admin(),
                 usuario.getUsu_roles() != null
                         ? usuario.getUsu_roles().stream().map(RoleResponseDTO::new).toList()
-                        : List.of()
+                        : List.of(),
+                Boolean.TRUE.equals(usuario.getUsu_is_manejo())
         );
     }
 }
