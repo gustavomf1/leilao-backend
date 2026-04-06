@@ -34,6 +34,9 @@ public record LoteRequestDTO(
         @Schema(example = "5500.00", description = "Preço de compra ou lance inicial")
         BigDecimal precoCompra,
 
+        @Schema(example = "1", description = "ID do leilão")
+        Long leilaoId,
+
         @Schema(example = "1", description = "ID do usuário vendedor")
         Long vendedorId,
 
