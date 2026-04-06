@@ -40,6 +40,8 @@ public class UsuarioService {
             funcionario.setUsu_is_admin(true);
         }
 
+        funcionario.setUsu_is_manejo(Boolean.TRUE.equals(dto.isManejo()));
+
         String senhaCriptografada = passwordEncoder.encode(dto.senha());
         funcionario.setUsu_senha(senhaCriptografada);
 
@@ -112,6 +114,10 @@ public class UsuarioService {
 
         if (dto.senha() != null && !dto.senha().isBlank()) {
             funcionario.setUsu_senha(passwordEncoder.encode(dto.senha()));
+        }
+
+        if (dto.isManejo() != null) {
+            funcionario.setUsu_is_manejo(dto.isManejo());
         }
 
         return new UsuarioFuncionarioResponseDTO(funcionario);

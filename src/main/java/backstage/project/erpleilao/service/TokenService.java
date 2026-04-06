@@ -44,6 +44,7 @@ public class TokenService {
                     .withClaim("nome", usuario.getUsu_nome())
                     .withClaim("tipo", usuario.getUsu_tipo().name())
                     .withClaim("isAdmin", Boolean.TRUE.equals(usuario.getUsu_is_admin()))
+                    .withClaim("isManejo", Boolean.TRUE.equals(usuario.getUsu_is_manejo()))
                     .withClaim("roles", roles)
                     .withClaim("permissoes", permissoes)
                     .withExpiresAt(dataExpiracao())

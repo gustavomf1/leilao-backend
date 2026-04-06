@@ -54,6 +54,9 @@ public class UsuarioEntity implements UserDetails {
     @Column(name = "usu_is_admin", nullable = false)
     private Boolean usu_is_admin = false;
 
+    @Column(name = "usu_is_manejo", nullable = false)
+    private Boolean usu_is_manejo = false;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "usuario_roles",

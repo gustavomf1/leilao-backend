@@ -1,5 +1,6 @@
 package backstage.project.erpleilao.entity;
 
+import backstage.project.erpleilao.entity.enums.StatusLote;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,12 +30,22 @@ public class LoteEntity {
     private String especie;
     private String categoriaAnimal;
     private String obs;
+
+    // Nullable — preenchido pelo responsável de preço (não pelo manejo)
     private BigDecimal precoCompra;
+
+    // Nome informal do vendedor digitado pelo manejo (ex: "Zezin")
+    private String vendedorNomeRascunho;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusLote status = StatusLote.AGUARDANDO_ESCRITORIO;
 
     @ManyToOne
     @JoinColumn(name = "leilao_id")
     private LeilaoEntity leilao;
 
+    // Nullable — vinculado pelo escritório após confirmar o nome
     @ManyToOne
     @JoinColumn(name = "vendedor_id")
     private UsuarioEntity vendedor;
