@@ -1,15 +1,21 @@
 package backstage.project.erpleilao.service;
 
 import backstage.project.erpleilao.dtos.LeilaoDTO;
+import backstage.project.erpleilao.dtos.LeilaoResumoDTO;
+import backstage.project.erpleilao.dtos.LoteDisplayDTO;
 import backstage.project.erpleilao.entity.CondicaoEntity;
 import backstage.project.erpleilao.entity.LeilaoEntity;
+import backstage.project.erpleilao.entity.LoteEntity;
 import backstage.project.erpleilao.entity.TaxaComissaoEntity;
 import backstage.project.erpleilao.repository.CondicaoRepository;
 import backstage.project.erpleilao.repository.LeilaoRepository;
+import backstage.project.erpleilao.repository.LoteRepository;
 import backstage.project.erpleilao.repository.TaxaComissaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -23,6 +29,9 @@ public class LeilaoService {
 
     @Autowired
     private TaxaComissaoRepository taxasRepository;
+
+    @Autowired
+    private LoteRepository loteRepository;
 
     public List<LeilaoEntity> listarTodos() {
         return leilaoRepository.findAll();
@@ -41,6 +50,51 @@ public class LeilaoService {
     public LeilaoEntity atualizar(Long id, LeilaoDTO dto) {
         LeilaoEntity leilao = buscarPorId(id);
         return salvarDados(leilao, dto);
+    }
+
+    public LeilaoResumoDTO buscarResumo(Long id) {
+        LeilaoEntity leilao = buscarPorId(id);
+        List<LoteEntity> lotes = loteRepository.findByLeilaoId(id);
+
+        int totalLotes = lotes.size();
+        int lotesVendidos = (int) lotes.stream().filter(l -> l.getComprador() != null).count();
+        int totalAnimais = lotes.stream().mapToInt(l -> l.getQntdAnimais() != null ? l.getQntdAnimais() : 0).sum();
+        int animaisVendidos = lotes.stream().filter(l -> l.getComprador() != null)
+                .mapToInt(l -> l.getQntdAnimais() != null ? l.getQntdAnimais() : 0).sum();
+
+        BigDecimal movimentacaoBruta = lotes.stream()
+                .filter(l -> l.getComprador() != null && l.getPrecoCompra() != null)
+                .map(LoteEntity::getPrecoCompra)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal ticketMedio = lotesVendidos > 0
+                ? movimentacaoBruta.divide(BigDecimal.valueOf(lotesVendidos), 2, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
+
+        TaxaComissaoEntity taxa = leilao.getTaxa();
+        CondicaoEntity condicao = leilao.getCondicao();
+
+        BigDecimal receitaComissao = BigDecimal.ZERO;
+        if (taxa != null) {
+            BigDecimal percTotal = (taxa.getComissaoVendedor() != null ? taxa.getComissaoVendedor() : BigDecimal.ZERO)
+                    .add(taxa.getComissaoComprador() != null ? taxa.getComissaoComprador() : BigDecimal.ZERO);
+            receitaComissao = movimentacaoBruta.multiply(percTotal)
+                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+        }
+
+        return new LeilaoResumoDTO(
+                leilao.getId(), leilao.getDescricao(), leilao.getLocal(),
+                leilao.getCidade(), leilao.getUf(), leilao.getData(),
+                condicao != null ? condicao.getDescricao() : null,
+                taxa != null ? taxa.getComissaoVendedor() : null,
+                taxa != null ? taxa.getComissaoComprador() : null,
+                taxa != null && taxa.getEspecie() != null ? taxa.getEspecie().getNome() : null,
+                taxa != null && taxa.getTipoLeilao() != null ? taxa.getTipoLeilao().name() : null,
+                taxa != null && taxa.getTaxaPor() != null ? taxa.getTaxaPor().name() : null,
+                totalLotes, lotesVendidos, totalLotes - lotesVendidos,
+                totalAnimais, animaisVendidos, movimentacaoBruta, receitaComissao, ticketMedio,
+                lotes.stream().map(LoteDisplayDTO::new).toList()
+        );
     }
 
     public void deletar(Long id) {

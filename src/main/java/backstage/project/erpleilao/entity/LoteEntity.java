@@ -32,6 +32,10 @@ public class LoteEntity {
     private BigDecimal precoCompra;
 
     @ManyToOne
+    @JoinColumn(name = "leilao_id")
+    private LeilaoEntity leilao;
+
+    @ManyToOne
     @JoinColumn(name = "vendedor_id")
     private UsuarioEntity vendedor;
 

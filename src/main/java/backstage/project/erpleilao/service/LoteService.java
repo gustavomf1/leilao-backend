@@ -3,6 +3,7 @@ package backstage.project.erpleilao.service;
 import backstage.project.erpleilao.dtos.LoteDisplayDTO;
 import backstage.project.erpleilao.dtos.LoteRequestDTO;
 import backstage.project.erpleilao.entity.LoteEntity;
+import backstage.project.erpleilao.repository.LeilaoRepository;
 import backstage.project.erpleilao.repository.LoteRepository;
 import backstage.project.erpleilao.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,6 +23,9 @@ public class LoteService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private LeilaoRepository leilaoRepository;
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -48,6 +52,12 @@ public class LoteService {
         lote.setCategoriaAnimal(dados.categoriaAnimal());
         lote.setObs(dados.obs());
         lote.setPrecoCompra(dados.precoCompra());
+
+        if (dados.leilaoId() != null) {
+            var leilao = leilaoRepository.findById(dados.leilaoId())
+                    .orElseThrow(() -> new EntityNotFoundException("Leilão não encontrado"));
+            lote.setLeilao(leilao);
+        }
 
         lote.setVendedor(vendedor);
         lote.setComprador(comprador);
@@ -95,6 +105,12 @@ public class LoteService {
         lote.setCategoriaAnimal(dados.categoriaAnimal());
         lote.setObs(dados.obs());
         lote.setPrecoCompra(dados.precoCompra());
+        if (dados.leilaoId() != null) {
+            var leilao = leilaoRepository.findById(dados.leilaoId())
+                    .orElseThrow(() -> new EntityNotFoundException("Leilão não encontrado"));
+            lote.setLeilao(leilao);
+        }
+
         lote.setVendedor(vendedor);
         lote.setComprador(comprador);
 
