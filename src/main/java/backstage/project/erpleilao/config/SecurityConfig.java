@@ -40,6 +40,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> {
                     req.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll();
                     req.requestMatchers(HttpMethod.POST, "/api/login").permitAll();
+                    req.requestMatchers(HttpMethod.POST, "/api/senha/**").permitAll();
+                    req.requestMatchers(HttpMethod.GET, "/api/senha/validar").permitAll();
                     req.requestMatchers(HttpMethod.POST, "/api/usuario/funcionario").permitAll();
                     req.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                     req.requestMatchers("/ws-leilao/**").permitAll();
