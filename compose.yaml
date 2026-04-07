@@ -94,6 +94,9 @@ services:
       # Dizendo ao Spring onde encontrar o Redis no Docker
       - SPRING_DATA_REDIS_HOST=redis
       - SPRING_DATA_REDIS_PORT=6379
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - FRONTEND_URL=${FRONTEND_URL}
 
 volumes:
   portainer_data:
