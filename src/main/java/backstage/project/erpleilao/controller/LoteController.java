@@ -33,10 +33,11 @@ public class LoteController {
     }
 
     @GetMapping
-    @Operation(summary = "Lista todos os lotes")
+    @Operation(summary = "Lista todos os lotes", description = "Use ?naoVendido=true para filtrar apenas lotes não vendidos no leilão")
     @RequirePermission(acao = Acao.VISUALIZAR, ambiente = Ambiente.LOTES)
-    public ResponseEntity<List<LoteDisplayDTO>> listarTodos() {
-        return ResponseEntity.ok(service.listarTodos());
+    public ResponseEntity<List<LoteDisplayDTO>> listarTodos(
+            @RequestParam(required = false) Boolean naoVendido) {
+        return ResponseEntity.ok(service.listarTodos(naoVendido));
     }
 
     @GetMapping("/{id}")

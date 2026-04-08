@@ -46,8 +46,8 @@ Standard layered architecture:
 The system manages cattle auctions:
 - `Usuario` — system users with `TipoUsuario` enum (Cliente / Funcionário)
 - `Cliente` — auction participants, each has multiple `Fazenda` (farms)
-- `Leilao` — auctions with associated `Condicao` (payment conditions) and `TaxaComissao` (commission rates)
-- `Lote` — auction lots with `vendedor_id` and `comprador_id` FK references to `Cliente`
+- `Leilao` — auctions with associated `Condicao` (payment conditions) and `TaxaComissao` (commission rates). Possui `StatusLeilao` enum (`ABERTO`, `EM_ANDAMENTO`, `FINALIZADO`) que controla o ciclo de vida do evento.
+- `Lote` — auction lots with `vendedor_id` and `comprador_id` FK references to `Cliente`. Possui `StatusLote` enum (`AGUARDANDO_ESCRITORIO`, `AGUARDANDO_LANCE`, `FINALIZADO`). Campo `nao_vendido_no_leilao` (VARCHAR(1) "S"/"N") marca lotes que não receberam lance ao encerrar o evento.
 
 ### Security
 
@@ -66,5 +66,29 @@ JWT-based auth via `SecurityFilter` (pre-request filter). Public endpoints are c
 
 - DTOs are used for all controller input/output — entities are never exposed directly.
 - `application.properties` holds all environment config (DB, JWT secret, Redis, Evolution API URL). No `.env` file.
-- Schema is managed via **Flyway** migrations in `src/main/resources/db/migration/` (naming: `V<n>__description.sql`). Hibernate is set to `ddl-auto=validate` — it verifies the schema but never modifies it.
+- Schema is managed via **Flyway** migrations in `src/main/resources/db/migration/` (naming: `V<n>__description.sql`, atualmente em **V17**). Hibernate is set to `ddl-auto=validate` — it verifies the schema but never modifies it.
 - Swagger UI available at `/swagger-ui.html` (via SpringDoc OpenAPI 2.8.5).
+
+### Evento de Leilão (Fluxo de Lances)
+
+Funcionalidade que permite executar o evento do leilão em tempo real. Endpoints autenticados:
+
+- `PATCH /api/leiloes/{id}/iniciar` — Inicia o evento (ABERTO → EM_ANDAMENTO). Leilão FINALIZADO **não pode** ser reiniciado. Lotes não são avançados automaticamente — cada lote deve ser avançado manualmente via `PATCH /api/lote/{id}/status/avancar`.
+- `PATCH /api/leiloes/{id}/encerrar` — Encerra o evento (EM_ANDAMENTO → FINALIZADO). Lotes sem lance recebem `nao_vendido_no_leilao = "S"`.
+- `PATCH /api/lote/{id}/preco` — Registra lance em um lote (AGUARDANDO_LANCE → FINALIZADO).
+
+### Link Público do Evento (`PublicoLoteController`)
+
+Endpoints sem autenticação para a tela pública de anotação de lances:
+
+- `GET /api/publico/leilao/{leilaoId}/lotes` — Lista lotes do leilão com status `AGUARDANDO_LANCE` ou `FINALIZADO`.
+- `PATCH /api/publico/lote/{id}/preco` — Registra lance sem necessidade de JWT. O lance dispara o mesmo fluxo Redis → WebSocket, atualizando todas as telas em tempo real.
+
+O link público é gerado pela tela de evento (`/leiloes/{id}/evento`) clicando em **"Gerar Link"** enquanto o leilão está `EM_ANDAMENTO`. O link segue o padrão `{frontendUrl}/#/publico/evento/{leilaoId}`.
+
+### Monitor de Lotes
+
+- Filtro `?naoVendido=true` disponível em `GET /api/lote` para buscar apenas lotes não vendidos.
+- Admin pode excluir lotes em qualquer status.
+
+Ver `docs/evento-leilao.md` e `docs/link-publico.md` para documentação completa.

@@ -167,6 +167,20 @@ public class LeilaoController {
         return ResponseEntity.ok(leilaoService.atualizar(id, dto));
     }
 
+    @PatchMapping("/{id}/iniciar")
+    @Operation(summary = "Iniciar evento do leilão", description = "Abre a sessão de lances para os lotes vinculados")
+    @RequirePermission(acao = Acao.EDITAR, ambiente = Ambiente.LEILOES)
+    public ResponseEntity<LeilaoEntity> iniciarLeilao(@PathVariable Long id) {
+        return ResponseEntity.ok(leilaoService.iniciarLeilao(id));
+    }
+
+    @PatchMapping("/{id}/encerrar")
+    @Operation(summary = "Encerrar evento do leilão", description = "Encerra a sessão de lances e marca lotes não vendidos")
+    @RequirePermission(acao = Acao.EDITAR, ambiente = Ambiente.LEILOES)
+    public ResponseEntity<LeilaoEntity> encerrarLeilao(@PathVariable Long id) {
+        return ResponseEntity.ok(leilaoService.encerrarLeilao(id));
+    }
+
     @DeleteMapping("/{id}")
     @Operation(
             summary = "Deletar leilão",
