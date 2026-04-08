@@ -22,7 +22,8 @@ public record LoteDisplayDTO(
         Double precoCompra,
         String vendedorNome,
         String vendedorNomeRascunho,
-        StatusLote status
+        StatusLote status,
+        String naoVendidoNoLeilao
 ) {
     public LoteDisplayDTO(LoteEntity lote) {
         this(
@@ -42,7 +43,8 @@ public record LoteDisplayDTO(
                 lote.getPrecoCompra() != null ? lote.getPrecoCompra().doubleValue() : null,
                 lote.getVendedor()  != null ? lote.getVendedor().getUsu_nome()   : null,
                 lote.getVendedorNomeRascunho(),
-                lote.getStatus()
+                lote.getStatus(),
+                lote.getNaoVendidoNoLeilao()
         );
     }
 }

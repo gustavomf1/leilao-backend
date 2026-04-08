@@ -1,5 +1,6 @@
 package backstage.project.erpleilao.entity;
 
+import backstage.project.erpleilao.entity.enums.StatusLeilao;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,6 +34,10 @@ public class LeilaoEntity {
 
     @Column(name = "lei_inativo", nullable = false, length = 1)
     private String inativo = "N";
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "lei_status", nullable = false, length = 20)
+    private StatusLeilao status = StatusLeilao.ABERTO;
 
     @ManyToOne
     @JoinColumn(name = "lei_con_id", nullable = false)

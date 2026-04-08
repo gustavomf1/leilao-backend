@@ -7,10 +7,13 @@ import backstage.project.erpleilao.entity.CondicaoEntity;
 import backstage.project.erpleilao.entity.LeilaoEntity;
 import backstage.project.erpleilao.entity.LoteEntity;
 import backstage.project.erpleilao.entity.TaxaComissaoEntity;
+import backstage.project.erpleilao.entity.enums.StatusLeilao;
+import backstage.project.erpleilao.entity.enums.StatusLote;
 import backstage.project.erpleilao.repository.CondicaoRepository;
 import backstage.project.erpleilao.repository.LeilaoRepository;
 import backstage.project.erpleilao.repository.LoteRepository;
 import backstage.project.erpleilao.repository.TaxaComissaoRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -93,8 +96,48 @@ public class LeilaoService {
                 taxa != null && taxa.getTaxaPor() != null ? taxa.getTaxaPor().name() : null,
                 totalLotes, lotesVendidos, totalLotes - lotesVendidos,
                 totalAnimais, animaisVendidos, movimentacaoBruta, receitaComissao, ticketMedio,
-                lotes.stream().map(LoteDisplayDTO::new).toList()
+                lotes.stream()
+                        .filter(l -> l.getStatus() == StatusLote.AGUARDANDO_LANCE || l.getStatus() == StatusLote.FINALIZADO)
+                        .map(LoteDisplayDTO::new).toList()
         );
+    }
+
+    @Transactional
+    public LeilaoEntity iniciarLeilao(Long id) {
+        LeilaoEntity leilao = buscarPorId(id);
+
+        if (leilao.getStatus() != StatusLeilao.ABERTO) {
+            throw new IllegalStateException("Leilão só pode ser iniciado quando está com status ABERTO");
+        }
+
+        List<LoteEntity> lotes = loteRepository.findByLeilaoId(id);
+        if (lotes.isEmpty()) {
+            throw new IllegalStateException("Leilão não possui lotes vinculados");
+        }
+
+        leilao.setStatus(StatusLeilao.EM_ANDAMENTO);
+        return leilaoRepository.save(leilao);
+    }
+
+    @Transactional
+    public LeilaoEntity encerrarLeilao(Long id) {
+        LeilaoEntity leilao = buscarPorId(id);
+
+        if (leilao.getStatus() != StatusLeilao.EM_ANDAMENTO) {
+            throw new IllegalStateException("Leilão só pode ser encerrado quando está EM_ANDAMENTO");
+        }
+
+        List<LoteEntity> lotes = loteRepository.findByLeilaoId(id);
+
+        // Lotes que permaneceram sem lance recebem a flag nao_vendido_no_leilao = "S"
+        for (LoteEntity lote : lotes) {
+            if (lote.getStatus() == StatusLote.AGUARDANDO_LANCE && lote.getPrecoCompra() == null) {
+                lote.setNaoVendidoNoLeilao("S");
+            }
+        }
+
+        leilao.setStatus(StatusLeilao.FINALIZADO);
+        return leilaoRepository.save(leilao);
     }
 
     public void deletar(Long id) {

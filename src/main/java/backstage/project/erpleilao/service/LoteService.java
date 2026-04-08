@@ -73,6 +73,7 @@ public class LoteService {
 
         // Manejo sempre cria em AGUARDANDO_ESCRITORIO — preço é preenchido após o lance
         lote.setStatus(StatusLote.AGUARDANDO_ESCRITORIO);
+        lote.setNaoVendidoNoLeilao("N");
 
         var loteSalvo = repository.save(lote);
         var dto = new LoteDisplayDTO(loteSalvo);
@@ -80,11 +81,19 @@ public class LoteService {
         return dto;
     }
 
-    public List<LoteDisplayDTO> listarTodos() {
-        return repository.findAll()
+    public List<LoteDisplayDTO> listarPorLeilaoPublico(Long leilaoId) {
+        return repository
+                .findByLeilaoIdAndStatusIn(leilaoId, List.of(StatusLote.AGUARDANDO_LANCE, StatusLote.FINALIZADO))
                 .stream()
                 .map(LoteDisplayDTO::new)
                 .toList();
+    }
+
+    public List<LoteDisplayDTO> listarTodos(Boolean naoVendido) {
+        List<LoteEntity> lotes = Boolean.TRUE.equals(naoVendido)
+                ? repository.findByNaoVendidoNoLeilao("S")
+                : repository.findAll();
+        return lotes.stream().map(LoteDisplayDTO::new).toList();
     }
 
     public LoteDisplayDTO buscarPorId(Long id) {

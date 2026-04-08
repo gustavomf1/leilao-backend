@@ -53,4 +53,7 @@ public class LoteEntity {
     @ManyToOne
     @JoinColumn(name = "comprador_id")
     private UsuarioEntity comprador;
+
+    @Column(name = "nao_vendido_no_leilao", nullable = false, length = 1)
+    private String naoVendidoNoLeilao = "N";
 }
