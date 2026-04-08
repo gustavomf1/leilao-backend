@@ -45,8 +45,6 @@ public class SecurityConfig {
                     req.requestMatchers(HttpMethod.POST, "/api/usuario/funcionario").permitAll();
                     req.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                     req.requestMatchers("/ws-leilao/**").permitAll();
-                    req.requestMatchers(HttpMethod.GET,   "/api/publico/**").permitAll();
-                    req.requestMatchers(HttpMethod.PATCH, "/api/publico/**").permitAll();
                     req.requestMatchers("/api/roles/**").hasRole("ADMIN");
                     req.anyRequest().authenticated();
                 })

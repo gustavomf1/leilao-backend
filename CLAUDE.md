@@ -77,14 +77,14 @@ Funcionalidade que permite executar o evento do leilão em tempo real. Endpoints
 - `PATCH /api/leiloes/{id}/encerrar` — Encerra o evento (EM_ANDAMENTO → FINALIZADO). Lotes sem lance recebem `nao_vendido_no_leilao = "S"`.
 - `PATCH /api/lote/{id}/preco` — Registra lance em um lote (AGUARDANDO_LANCE → FINALIZADO).
 
-### Link Público do Evento (`PublicoLoteController`)
+### Link de Evento para Funcionário (`PublicoLoteController`)
 
-Endpoints sem autenticação para a tela pública de anotação de lances:
+Endpoints **autenticados** (JWT obrigatório) para a tela de anotação de lances enviada a um funcionário externo:
 
 - `GET /api/publico/leilao/{leilaoId}/lotes` — Lista lotes do leilão com status `AGUARDANDO_LANCE` ou `FINALIZADO`.
-- `PATCH /api/publico/lote/{id}/preco` — Registra lance sem necessidade de JWT. O lance dispara o mesmo fluxo Redis → WebSocket, atualizando todas as telas em tempo real.
+- `PATCH /api/publico/lote/{id}/preco` — Registra lance. O lance dispara o mesmo fluxo Redis → WebSocket, atualizando todas as telas em tempo real.
 
-O link público é gerado pela tela de evento (`/leiloes/{id}/evento`) clicando em **"Gerar Link"** enquanto o leilão está `EM_ANDAMENTO`. O link segue o padrão `{frontendUrl}/#/publico/evento/{leilaoId}`.
+O link é gerado pela tela de evento (`/leiloes/{id}/evento`) clicando em **"Gerar Link"** enquanto o leilão está `EM_ANDAMENTO`. O link segue o padrão `{frontendUrl}/#/publico/evento/{leilaoId}`. A rota exige `authGuard` — o funcionário precisa estar logado no sistema para acessá-la. O WebSocket envia o JWT nos `connectHeaders` do STOMP.
 
 ### Monitor de Lotes
 
