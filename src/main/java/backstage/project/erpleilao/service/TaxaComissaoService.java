@@ -2,7 +2,9 @@ package backstage.project.erpleilao.service;
 
 import backstage.project.erpleilao.dtos.TaxaRequestDTO;
 import backstage.project.erpleilao.dtos.TaxaResponseDTO;
+import backstage.project.erpleilao.entity.EspecieEntity;
 import backstage.project.erpleilao.entity.TaxaComissaoEntity;
+import backstage.project.erpleilao.repository.EspecieRepository;
 import backstage.project.erpleilao.repository.TaxaComissaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,8 +15,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class TaxaComissaoService {
+
     @Autowired
     private TaxaComissaoRepository repository;
+
+    @Autowired
+    private EspecieRepository especieRepository;
 
     @Transactional(readOnly = true)
     public List<TaxaResponseDTO> listar() {
@@ -33,9 +39,14 @@ public class TaxaComissaoService {
 
     @Transactional
     public TaxaResponseDTO salvar(TaxaRequestDTO dto) {
+        EspecieEntity especie = especieRepository.findById(dto.especieId())
+                .orElseThrow(() -> new RuntimeException("Espécie não encontrada"));
         TaxaComissaoEntity taxa = new TaxaComissaoEntity();
-        taxa.setPorcentagem(dto.porcentagem());
-        taxa.setTipoCliente(dto.tipoCliente());
+        taxa.setComissaoVendedor(dto.comissaoVendedor());
+        taxa.setComissaoComprador(dto.comissaoComprador());
+        taxa.setEspecie(especie);
+        taxa.setTipoLeilao(dto.tipoLeilao());
+        taxa.setTaxaPor(dto.taxaPor() != null ? dto.taxaPor() : backstage.project.erpleilao.entity.enums.TaxaPor.ANIMAL);
         taxa.setInativo("N");
         return convertToResponseDTO(repository.save(taxa));
     }
@@ -44,8 +55,13 @@ public class TaxaComissaoService {
     public TaxaResponseDTO atualizar(Long id, TaxaRequestDTO dto) {
         TaxaComissaoEntity taxa = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Taxa não encontrada"));
-        taxa.setPorcentagem(dto.porcentagem());
-        taxa.setTipoCliente(dto.tipoCliente());
+        EspecieEntity especie = especieRepository.findById(dto.especieId())
+                .orElseThrow(() -> new RuntimeException("Espécie não encontrada"));
+        taxa.setComissaoVendedor(dto.comissaoVendedor());
+        taxa.setComissaoComprador(dto.comissaoComprador());
+        taxa.setEspecie(especie);
+        taxa.setTipoLeilao(dto.tipoLeilao());
+        if (dto.taxaPor() != null) taxa.setTaxaPor(dto.taxaPor());
         return convertToResponseDTO(repository.save(taxa));
     }
 
@@ -60,8 +76,12 @@ public class TaxaComissaoService {
     private TaxaResponseDTO convertToResponseDTO(TaxaComissaoEntity taxa) {
         return new TaxaResponseDTO(
                 taxa.getId(),
-                taxa.getPorcentagem(),
-                taxa.getTipoCliente(),
+                taxa.getComissaoVendedor(),
+                taxa.getComissaoComprador(),
+                taxa.getEspecie().getId(),
+                taxa.getEspecie().getNome(),
+                taxa.getTipoLeilao(),
+                taxa.getTaxaPor(),
                 taxa.getInativo()
         );
     }

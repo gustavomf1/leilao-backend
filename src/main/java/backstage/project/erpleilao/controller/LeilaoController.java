@@ -1,7 +1,11 @@
 package backstage.project.erpleilao.controller;
 
+import backstage.project.erpleilao.config.RequirePermission;
 import backstage.project.erpleilao.dtos.LeilaoDTO;
+import backstage.project.erpleilao.dtos.LeilaoResumoDTO;
 import backstage.project.erpleilao.entity.LeilaoEntity;
+import backstage.project.erpleilao.entity.enums.Acao;
+import backstage.project.erpleilao.entity.enums.Ambiente;
 import backstage.project.erpleilao.service.LeilaoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -43,6 +47,7 @@ public class LeilaoController {
                     content = @Content
             )
     })
+    @RequirePermission(acao = Acao.VISUALIZAR, ambiente = Ambiente.LEILOES)
     public ResponseEntity<List<LeilaoEntity>> listarTodos() {
         return ResponseEntity.ok(leilaoService.listarTodos());
     }
@@ -70,11 +75,19 @@ public class LeilaoController {
                     content = @Content
             )
     })
+    @RequirePermission(acao = Acao.VISUALIZAR, ambiente = Ambiente.LEILOES)
     public ResponseEntity<LeilaoEntity> buscarPorId(
             @Parameter(description = "ID do leilão a ser buscado", required = true, example = "1")
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(leilaoService.buscarPorId(id));
+    }
+
+    @GetMapping("/{id}/resumo")
+    @Operation(summary = "Buscar resumo do leilão", description = "Retorna detalhes do leilão com lotes vendidos, restantes e faturamento")
+    @RequirePermission(acao = Acao.VISUALIZAR, ambiente = Ambiente.LEILOES)
+    public ResponseEntity<LeilaoResumoDTO> buscarResumo(@PathVariable Long id) {
+        return ResponseEntity.ok(leilaoService.buscarResumo(id));
     }
 
     @PostMapping
@@ -100,6 +113,7 @@ public class LeilaoController {
                     content = @Content
             )
     })
+    @RequirePermission(acao = Acao.CRIAR, ambiente = Ambiente.LEILOES)
     public ResponseEntity<LeilaoEntity> criar(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Dados do leilão a ser criado",
@@ -139,6 +153,7 @@ public class LeilaoController {
                     content = @Content
             )
     })
+    @RequirePermission(acao = Acao.EDITAR, ambiente = Ambiente.LEILOES)
     public ResponseEntity<LeilaoEntity> atualizar(
             @Parameter(description = "ID do leilão a ser atualizado", required = true, example = "1")
             @PathVariable Long id,
@@ -150,6 +165,20 @@ public class LeilaoController {
             @RequestBody LeilaoDTO dto
     ) {
         return ResponseEntity.ok(leilaoService.atualizar(id, dto));
+    }
+
+    @PatchMapping("/{id}/iniciar")
+    @Operation(summary = "Iniciar evento do leilão", description = "Abre a sessão de lances para os lotes vinculados")
+    @RequirePermission(acao = Acao.EDITAR, ambiente = Ambiente.LEILOES)
+    public ResponseEntity<LeilaoEntity> iniciarLeilao(@PathVariable Long id) {
+        return ResponseEntity.ok(leilaoService.iniciarLeilao(id));
+    }
+
+    @PatchMapping("/{id}/encerrar")
+    @Operation(summary = "Encerrar evento do leilão", description = "Encerra a sessão de lances e marca lotes não vendidos")
+    @RequirePermission(acao = Acao.EDITAR, ambiente = Ambiente.LEILOES)
+    public ResponseEntity<LeilaoEntity> encerrarLeilao(@PathVariable Long id) {
+        return ResponseEntity.ok(leilaoService.encerrarLeilao(id));
     }
 
     @DeleteMapping("/{id}")
@@ -174,6 +203,7 @@ public class LeilaoController {
                     content = @Content
             )
     })
+    @RequirePermission(acao = Acao.DELETAR, ambiente = Ambiente.LEILOES)
     public ResponseEntity<Void> deletar(
             @Parameter(description = "ID do leilão a ser removido", required = true, example = "1")
             @PathVariable Long id

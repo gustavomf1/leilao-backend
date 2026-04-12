@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evento de Leilao - Documentacao</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --red: #f85149;
+      --yellow: #d29922;
+      --blue: #58a6ff;
+      --purple: #bc8cff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+    }
+
+    h1 span { color: var(--green); }
+
+    h2 {
+      font-size: 1.4rem;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4rem;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    p, li { color: var(--text); margin-bottom: 0.5rem; }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Flow diagrams */
+    .flow {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.9rem;
+    }
+
+    .flow-node {
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      text-align: center;
+      min-width: 140px;
+    }
+
+    .flow-node small {
+      display: block;
+      font-weight: 400;
+      font-size: 0.75rem;
+      opacity: 0.7;
+      margin-top: 2px;
+    }
+
+    .flow-arrow {
+      color: var(--text-muted);
+      font-size: 1.4rem;
+    }
+
+    .node-blue { background: #1f3a5f; color: var(--blue); border: 1px solid var(--blue); }
+    .node-green { background: #1a3a2a; color: var(--green); border: 1px solid var(--green); }
+    .node-dark { background: #2d2d2d; color: #ccc; border: 1px solid #555; }
+    .node-yellow { background: #3a2f1a; color: var(--yellow); border: 1px solid var(--yellow); }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    th {
+      background: var(--surface);
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    td { background: var(--bg); }
+
+    tr:hover td { background: var(--surface); }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-blue { background: #1f3a5f; color: var(--blue); }
+    .badge-green { background: #1a3a2a; color: var(--green); }
+    .badge-red { background: #3a1a1a; color: var(--red); }
+    .badge-dark { background: #2d2d2d; color: #aaa; }
+    .badge-yellow { background: #3a2f1a; color: var(--yellow); }
+
+    /* Code blocks */
+    code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      background: var(--surface);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      color: var(--purple);
+    }
+
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 0.75rem 0;
+      font-size: 0.85rem;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--text);
+    }
+
+    .method { color: var(--green); font-weight: 700; }
+    .url { color: var(--accent); }
+
+    /* Steps */
+    .steps {
+      list-style: none;
+      counter-reset: step;
+      padding-left: 0;
+    }
+
+    .steps > li {
+      counter-increment: step;
+      padding: 0.75rem 0 0.75rem 2.5rem;
+      position: relative;
+      border-left: 2px solid var(--border);
+      margin-left: 0.75rem;
+    }
+
+    .steps > li:last-child { border-left-color: transparent; }
+
+    .steps > li::before {
+      content: counter(step);
+      position: absolute;
+      left: -0.85rem;
+      top: 0.65rem;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .steps > li strong { color: var(--green); }
+
+    .sub-list {
+      margin-top: 0.5rem;
+      padding-left: 1.2rem;
+      list-style: disc;
+    }
+
+    .sub-list li {
+      margin-bottom: 0.3rem;
+      color: var(--text-muted);
+    }
+
+    .sub-list li code { font-size: 0.8rem; }
+
+    /* Info boxes */
+    .info-box {
+      background: var(--surface);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0;
+      color: var(--text-muted);
+    }
+
+    .info-box.warning { border-left-color: var(--yellow); }
+    .info-box.danger { border-left-color: var(--red); }
+
+    /* Endpoint cards */
+    .endpoint {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+    }
+
+    .endpoint-header {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .endpoint-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .endpoint-meta strong { color: var(--text); }
+
+    /* File list */
+    .file-tag {
+      font-size: 0.75rem;
+      padding: 0.1rem 0.45rem;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .file-new { background: #1a3a2a; color: var(--green); }
+    .file-mod { background: #3a2f1a; color: var(--yellow); }
+
+    /* Section divider */
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      body { padding: 1rem; }
+      .flow { flex-direction: column; }
+      .flow-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <h1><span>&#9881;</span> Evento de Leilao</h1>
+  <p class="subtitle">Funcionalidade de execucao do leilao em tempo real com registro de lances e controle de ciclo de vida.</p>
+
+  <!-- ============================================ -->
+  <h2>Ciclo de Vida do Leilao</h2>
+
+  <div class="flow">
+    <div class="flow-node node-blue">ABERTO<small>recem-criado</small></div>
+    <div class="flow-arrow">&#10132;</div>
+    <div class="flow-node node-green">EM_ANDAMENTO<small>evento ativo</small></div>
+    <div class="flow-arrow">&#10132;</div>
+    <div class="flow-node node-dark">FINALIZADO<small>encerrado</small></div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Descricao</th>
+        <th>Acoes disponiveis</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="badge badge-blue">ABERTO</span></td>
+        <td>Leilao recem-criado, aguardando inicio</td>
+        <td>Botao <strong>"Comecar Leilao"</strong></td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-green">EM_ANDAMENTO</span></td>
+        <td>Evento ativo, lotes abertos para lances</td>
+        <td>Registrar lances + Botao <strong>"Encerrar Leilao"</strong></td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-dark">FINALIZADO</span></td>
+        <td>Evento encerrado, sem retorno</td>
+        <td>Apenas visualizacao do resultado</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box warning">
+    O status eh <strong>irreversivel</strong>. Uma vez finalizado, o leilao nao pode ser reiniciado.
+  </div>
+
+  <!-- ============================================ -->
+  <h2>Ciclo de Vida do Lote</h2>
+
+  <div class="flow">
+    <div class="flow-node node-yellow">AGUARDANDO_ESCRITORIO<small>manejo criou</small></div>
+    <div class="flow-arrow">&#10132;</div>
+    <div class="flow-node node-blue">AGUARDANDO_LANCE<small>ao iniciar leilao</small></div>
+    <div class="flow-arrow">&#10132;</div>
+    <div class="flow-node node-dark">FINALIZADO<small>lance registrado</small></div>
+  </div>
+
+  <h3>Flag <code>nao_vendido_no_leilao</code></h3>
+  <table>
+    <thead>
+      <tr><th>Propriedade</th><th>Detalhe</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Tipo</td><td><code>VARCHAR(1)</code> &mdash; <code>"S"</code> ou <code>"N"</code></td></tr>
+      <tr><td>Default</td><td><code>"N"</code> (ao criar o lote)</td></tr>
+      <tr><td>Quando marca <code>"S"</code></td><td>Automaticamente ao <strong>encerrar o leilao</strong>, para lotes em <code>AGUARDANDO_LANCE</code> sem preco</td></tr>
+      <tr><td>Visibilidade</td><td>Badge vermelho <span class="badge badge-red">Nao vendido</span> na listagem de lotes</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ============================================ -->
+  <h2>Fluxo Passo a Passo</h2>
+
+  <h3>1. Acessar o Evento</h3>
+  <p><strong>Opcao A</strong> &mdash; Pela lista de leiloes:</p>
+  <ol class="steps">
+    <li>Menu lateral &rarr; <strong>Leiloes</strong></li>
+    <li>Na tabela, clique no <strong>icone de martelo verde</strong> na coluna "Acoes"</li>
+  </ol>
+
+  <p><strong>Opcao B</strong> &mdash; Pela visualizacao do leilao:</p>
+  <ol class="steps">
+    <li>Menu lateral &rarr; <strong>Leiloes</strong> &rarr; clique no icone de olho para ver detalhes</li>
+    <li>No header, clique no botao verde <strong>"Evento"</strong></li>
+  </ol>
+
+  <div class="info-box">Ambas as opcoes levam para a rota: <code>/leiloes/:id/evento</code></div>
+
+  <h3>2. Iniciar o Leilao</h3>
+  <ol class="steps">
+    <li>Na tela do evento, o status aparece como <span class="badge badge-blue">ABERTO</span></li>
+    <li>Clique no botao verde <strong>"Comecar Leilao"</strong></li>
+    <li>Modal de confirmacao aparece com botao <strong>"Iniciar"</strong> (verde)</li>
+    <li>Ao confirmar:
+      <ul class="sub-list">
+        <li>Status do leilao muda para <span class="badge badge-green">EM_ANDAMENTO</span></li>
+        <li>Lotes <strong>nao</strong> sao avancados automaticamente — cada lote deve ser avancado manualmente via botao "Avancar Status"</li>
+        <li>Tabela de lotes com input de lance aparece para lotes ja em <code>AGUARDANDO_LANCE</code></li>
+      </ul>
+    </li>
+  </ol>
+
+  <div class="info-box warning">
+    Leilao com status <span class="badge badge-dark">FINALIZADO</span> <strong>nao pode ser reiniciado</strong>. A transicao de status eh irreversivel.
+  </div>
+
+  <h3>3. Registrar Lances</h3>
+  <ol class="steps">
+    <li>Na tabela <strong>"Lotes Aguardando Lance"</strong>, cada lote tem um campo de valor</li>
+    <li>Digite o valor do lance no campo numerico</li>
+    <li>Clique no botao verde <strong>"Confirmar"</strong></li>
+    <li>Modal mostra o valor e o codigo do lote para confirmacao</li>
+    <li>Ao confirmar:
+      <ul class="sub-list">
+        <li><code>precoCompra</code> do lote eh salvo</li>
+        <li>Status do lote muda para <span class="badge badge-dark">FINALIZADO</span></li>
+        <li>Lote migra da tabela "Aguardando" para <strong>"Lotes Arrematados"</strong></li>
+        <li>KPIs e barra de progresso atualizam automaticamente</li>
+      </ul>
+    </li>
+  </ol>
+
+  <h3>4. Encerrar o Leilao</h3>
+  <ol class="steps">
+    <li>Clique no botao vermelho <strong>"Encerrar Leilao"</strong></li>
+    <li>Modal informa quantos lotes ficaram sem lance (se houver)</li>
+    <li>Ao confirmar:
+      <ul class="sub-list">
+        <li>Status do leilao muda para <span class="badge badge-dark">FINALIZADO</span></li>
+        <li>Lotes sem lance recebem <code>nao_vendido_no_leilao = "S"</code></li>
+        <li>Botoes "Comecar" e "Encerrar" desaparecem</li>
+        <li>Tela mostra resultado final: <em>"Este leilao foi encerrado"</em></li>
+      </ul>
+    </li>
+  </ol>
+
+  <!-- ============================================ -->
+  <h2>API Endpoints</h2>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method">PATCH</span> <span class="url">/api/leiloes/{id}/iniciar</span>
+    </div>
+    <div class="endpoint-meta">
+      <div><strong>Permissao:</strong> LEILOES:EDITAR</div>
+      <div><strong>Pre-condicao:</strong> Status do leilao = <code>ABERTO</code> (FINALIZADO nao pode ser reiniciado)</div>
+      <div><strong>Efeito:</strong> Status &rarr; <code>EM_ANDAMENTO</code>. Lotes <strong>nao</strong> sao avancados automaticamente.</div>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method">PATCH</span> <span class="url">/api/leiloes/{id}/encerrar</span>
+    </div>
+    <div class="endpoint-meta">
+      <div><strong>Permissao:</strong> LEILOES:EDITAR</div>
+      <div><strong>Pre-condicao:</strong> Status do leilao = <code>EM_ANDAMENTO</code></div>
+      <div><strong>Efeito:</strong> Status &rarr; <code>FINALIZADO</code>, lotes sem lance recebem flag <code>nao_vendido_no_leilao = "S"</code></div>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method">PATCH</span> <span class="url">/api/lote/{id}/preco</span>
+    </div>
+    <pre><code>Body: { "precoCompra": 5500.00 }</code></pre>
+    <div class="endpoint-meta">
+      <div><strong>Permissao:</strong> LOTES:EDITAR</div>
+      <div><strong>Pre-condicao:</strong> Status do lote = <code>AGUARDANDO_LANCE</code></div>
+      <div><strong>Efeito:</strong> Salva preco, status do lote &rarr; <code>FINALIZADO</code></div>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method">PATCH</span> <span class="url">/api/lote/{id}/status/avancar</span>
+    </div>
+    <div class="endpoint-meta">
+      <div><strong>Permissao:</strong> LOTES:EDITAR</div>
+      <div><strong>Efeito:</strong> Avanca o lote de <code>AGUARDANDO_ESCRITORIO</code> &rarr; <code>AGUARDANDO_LANCE</code> manualmente</div>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method">GET</span> <span class="url">/api/publico/leilao/{leilaoId}/lotes</span>
+    </div>
+    <div class="endpoint-meta">
+      <div><strong>Permissao:</strong> JWT obrigatorio (qualquer funcionario autenticado)</div>
+      <div><strong>Efeito:</strong> Retorna lotes com status <code>AGUARDANDO_LANCE</code> ou <code>FINALIZADO</code></div>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="method">PATCH</span> <span class="url">/api/publico/lote/{id}/preco</span>
+    </div>
+    <pre><code>Body: { "precoCompra": 5500.00 }</code></pre>
+    <div class="endpoint-meta">
+      <div><strong>Permissao:</strong> JWT obrigatorio (qualquer funcionario autenticado)</div>
+      <div><strong>Pre-condicao:</strong> Lote em <code>AGUARDANDO_LANCE</code></div>
+      <div><strong>Efeito:</strong> Salva preco, status &rarr; <code>FINALIZADO</code>, publica no Redis &rarr; WebSocket atualiza todas as telas</div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <h2>Link de Evento para Funcionario</h2>
+
+  <p>O operador pode gerar um link e enviar para um funcionario externo (ex.: anotador de lances em campo). Esse link abre uma tela dedicada com os lotes em tempo real e permite registrar lances.</p>
+
+  <div class="info-box warning">
+    O funcionario precisa estar <strong>logado no sistema</strong> para acessar o link. Caso nao esteja autenticado, sera redirecionado para a tela de login.
+  </div>
+
+  <h3>Como gerar o link</h3>
+  <ol class="steps">
+    <li>Com o leilao em <span class="badge badge-green">EM_ANDAMENTO</span>, clique no botao <strong>"Gerar Link"</strong> (icone de corrente)</li>
+    <li>A URL e copiada automaticamente para a area de transferencia</li>
+    <li>Envie o link para o funcionario (WhatsApp, email, etc.)</li>
+  </ol>
+
+  <p>Formato do link: <code>{frontendUrl}/#/publico/evento/{leilaoId}</code></p>
+
+  <h3>Fluxo Completo</h3>
+
+  <div class="flow" style="flex-direction:column; align-items:flex-start; gap:0.5rem; font-size:0.85rem;">
+    <div style="display:flex; align-items:center; gap:0.75rem;">
+      <div class="flow-node node-blue" style="min-width:200px;">Operador clica "Gerar Link"</div>
+      <div class="flow-arrow">&darr;</div>
+    </div>
+    <div style="display:flex; align-items:center; gap:0.75rem;">
+      <div class="flow-node node-yellow" style="min-width:200px;">URL copiada para clipboard<small>/#/publico/evento/{id}</small></div>
+      <div class="flow-arrow">&darr;</div>
+    </div>
+    <div style="display:flex; align-items:center; gap:0.75rem;">
+      <div class="flow-node node-green" style="min-width:200px;">Funcionario abre o link<small>authGuard valida JWT</small></div>
+      <div class="flow-arrow">&darr;</div>
+    </div>
+    <div style="display:flex; align-items:center; gap:0.75rem;">
+      <div class="flow-node node-blue" style="min-width:200px;">GET /api/publico/leilao/{id}/lotes<small>lista AGUARDANDO_LANCE + FINALIZADO</small></div>
+      <div class="flow-arrow">&darr;</div>
+    </div>
+    <div style="display:flex; align-items:center; gap:0.75rem;">
+      <div class="flow-node node-green" style="min-width:200px;">Funcionario registra lance<small>PATCH /api/publico/lote/{id}/preco</small></div>
+      <div class="flow-arrow">&darr;</div>
+    </div>
+    <div style="display:flex; align-items:center; gap:0.75rem;">
+      <div class="flow-node node-blue" style="min-width:200px;">Redis pub/sub &rarr; STOMP /topic/lotes</div>
+      <div class="flow-arrow">&darr;</div>
+    </div>
+    <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+      <div class="flow-node node-dark" style="min-width:180px;">Tela do evento atualiza stats + tabelas</div>
+      <div class="flow-node node-dark" style="min-width:180px;">Tela do funcionario atualiza card para FINALIZADO</div>
+    </div>
+  </div>
+
+  <h3>Filtros na tela do funcionario</h3>
+  <table>
+    <thead><tr><th>Tab</th><th>Exibe</th></tr></thead>
+    <tbody>
+      <tr><td>Todos</td><td>AGUARDANDO_LANCE + FINALIZADO</td></tr>
+      <tr><td>Aguardando Lance</td><td>Apenas AGUARDANDO_LANCE</td></tr>
+      <tr><td>Finalizado</td><td>Apenas FINALIZADO</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Seguranca</h3>
+  <table>
+    <thead><tr><th>Camada</th><th>Mecanismo</th></tr></thead>
+    <tbody>
+      <tr><td>Rota frontend</td><td><code>authGuard</code> — redireciona para login se sem JWT</td></tr>
+      <tr><td>Endpoints backend</td><td>JWT obrigatorio em <code>/api/publico/**</code> (Spring Security)</td></tr>
+      <tr><td>WebSocket</td><td>JWT enviado nos <code>connectHeaders</code> do STOMP</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ============================================ -->
+  <h2>Tela do Evento - Elementos</h2>
+
+  <table>
+    <thead>
+      <tr><th>Elemento</th><th>Descricao</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Badge de status</strong></td>
+        <td><span class="badge badge-blue">ABERTO</span> &nbsp; <span class="badge badge-green">EM ANDAMENTO</span> &nbsp; <span class="badge badge-dark">FINALIZADO</span></td>
+      </tr>
+      <tr>
+        <td><strong>KPI Cards</strong></td>
+        <td>Total de Lotes, Aguardando Lance, Finalizados, Progresso (%)</td>
+      </tr>
+      <tr>
+        <td><strong>Barra de progresso</strong></td>
+        <td>Visual do andamento (finalizados / total)</td>
+      </tr>
+      <tr>
+        <td><strong>Tabela Aguardando Lance</strong></td>
+        <td>Lotes com input de valor + botao confirmar <em>(so em EM_ANDAMENTO)</em></td>
+      </tr>
+      <tr>
+        <td><strong>Tabela Arrematados</strong></td>
+        <td>Lotes finalizados com valor do lance <em>(so em EM_ANDAMENTO)</em></td>
+      </tr>
+      <tr>
+        <td><strong>Tabela Geral</strong></td>
+        <td>Todos os lotes com status e flag "Nao Vendido" <em>(em ABERTO e FINALIZADO)</em></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ============================================ -->
+  <h2>Migrations</h2>
+
+  <table>
+    <thead>
+      <tr><th>Versao</th><th>Descricao</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>V16</code></td>
+        <td>Adiciona <code>nao_vendido_no_leilao VARCHAR(1) DEFAULT 'N'</code> em <code>lotes</code> e <code>lei_em_andamento VARCHAR(1)</code> em <code>leilao</code></td>
+      </tr>
+      <tr>
+        <td><code>V17</code></td>
+        <td>Substitui <code>lei_em_andamento</code> por <code>lei_status VARCHAR(20) DEFAULT 'ABERTO'</code> em <code>leilao</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ============================================ -->
+  <h2>Arquivos Modificados / Criados</h2>
+
+  <h3>Backend (erpleilao)</h3>
+  <table>
+    <thead>
+      <tr><th>Arquivo</th><th></th><th>Detalhes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>entity/enums/StatusLeilao.java</code></td><td><span class="file-tag file-new">NOVO</span></td><td>Enum ABERTO, EM_ANDAMENTO, FINALIZADO</td></tr>
+      <tr><td><code>entity/LeilaoEntity.java</code></td><td><span class="file-tag file-mod">MOD</span></td><td>Campo <code>status</code> (StatusLeilao)</td></tr>
+      <tr><td><code>entity/LoteEntity.java</code></td><td><span class="file-tag file-mod">MOD</span></td><td>Campo <code>naoVendidoNoLeilao</code></td></tr>
+      <tr><td><code>dtos/LoteDisplayDTO.java</code></td><td><span class="file-tag file-mod">MOD</span></td><td>Inclui <code>naoVendidoNoLeilao</code></td></tr>
+      <tr><td><code>service/LeilaoService.java</code></td><td><span class="file-tag file-mod">MOD</span></td><td><code>iniciarLeilao()</code>, <code>encerrarLeilao()</code></td></tr>
+      <tr><td><code>service/LoteService.java</code></td><td><span class="file-tag file-mod">MOD</span></td><td>Default <code>"N"</code> no cadastrar, <code>listarPorLeilaoPublico()</code></td></tr>
+      <tr><td><code>controller/LeilaoController.java</code></td><td><span class="file-tag file-mod">MOD</span></td><td>Endpoints <code>/iniciar</code> e <code>/encerrar</code></td></tr>
+      <tr><td><code>controller/PublicoLoteController.java</code></td><td><span class="file-tag file-new">NOVO</span></td><td>Endpoints <code>/api/publico/**</code> (JWT obrigatorio)</td></tr>
+      <tr><td><code>config/SecurityConfig.java</code></td><td><span class="file-tag file-mod">MOD</span></td><td>Apenas <code>/ws-leilao/**</code> permanece permitAll para handshake WebSocket</td></tr>
+      <tr><td><code>db/migration/V16__*.sql</code></td><td><span class="file-tag file-new">NOVO</span></td><td>Coluna nao_vendido + em_andamento</td></tr>
+      <tr><td><code>db/migration/V17__*.sql</code></td><td><span class="file-tag file-new">NOVO</span></td><td>Substitui em_andamento por lei_status</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Frontend (leilao-frontend)</h3>
+  <table>
+    <thead>
+      <tr><th>Arquivo</th><th></th><th>Detalhes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>core/models/entities.model.ts</code></td><td><span class="file-tag file-mod">MOD</span></td><td>StatusLeilao type + naoVendidoNoLeilao</td></tr>
+      <tr><td><code>core/services/leilao.service.ts</code></td><td><span class="file-tag file-mod">MOD</span></td><td>Novos metodos de evento</td></tr>
+      <tr><td><code>shared/services/alert.service.ts</code></td><td><span class="file-tag file-mod">MOD</span></td><td>Confirm customizavel (label + cor)</td></tr>
+      <tr><td><code>shared/components/confirm-modal.component.ts</code></td><td><span class="file-tag file-mod">MOD</span></td><td>Label e cor dinamicos no botao</td></tr>
+      <tr><td><code>components/leilao/evento-leilao/*</code></td><td><span class="file-tag file-new">NOVO</span></td><td>Componente completo do evento</td></tr>
+      <tr><td><code>components/leilao/leilao-list/*</code></td><td><span class="file-tag file-mod">MOD</span></td><td>Botao martelo para evento</td></tr>
+      <tr><td><code>components/leilao/leilao-view/*</code></td><td><span class="file-tag file-mod">MOD</span></td><td>Botao "Evento" no header</td></tr>
+      <tr><td><code>components/lote/lote-monitor/*</code></td><td><span class="file-tag file-mod">MOD</span></td><td>Filtro "Nao Vendido" + delete para admin em qualquer status</td></tr>
+      <tr><td><code>components/leilao/evento-publico/*</code></td><td><span class="file-tag file-new">NOVO</span></td><td>Tela de anotacao de lances para funcionario externo</td></tr>
+      <tr><td><code>core/services/lote-websocket.service.ts</code></td><td><span class="file-tag file-mod">MOD</span></td><td>JWT enviado nos <code>connectHeaders</code> do STOMP</td></tr>
+      <tr><td><code>core/services/lote.service.ts</code></td><td><span class="file-tag file-mod">MOD</span></td><td><code>listarPorLeilaoPublico()</code> e <code>registrarPrecoPublico()</code></td></tr>
+      <tr><td><code>app.routes.ts</code></td><td><span class="file-tag file-mod">MOD</span></td><td>Rota <code>/leiloes/:id/evento</code> + <code>/publico/evento/:leilaoId</code> (com authGuard)</td></tr>
+    </tbody>
+  </table>
+
+</body>
+</html>

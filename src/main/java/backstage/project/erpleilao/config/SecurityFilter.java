@@ -33,11 +33,16 @@ public class SecurityFilter extends OncePerRequestFilter {
         var tokenJWT = recuperarToken(request);
 
         if (tokenJWT != null) {
-            var subject = tokenService.getSubject(tokenJWT);
-            var usuario = repository.findByUsuEmail(subject);
+            try {
+                var subject = tokenService.getSubject(tokenJWT);
+                var usuario = repository.findByUsuEmail(subject);
 
-            var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (Exception ignored) {
+                // Token inválido ou expirado — segurança deixa passar para endpoints públicos
+                // e bloqueia em endpoints protegidos via authorizeHttpRequests
+            }
         }
 
         filterChain.doFilter(request, response);

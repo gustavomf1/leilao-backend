@@ -14,5 +14,8 @@ public record UsuarioFuncionarioDTO(
         String cpf,
 
         @Schema(description = "Senha de acesso ao sistema", example = "senha123", writeOnly = true)
-        String senha
+        String senha,
+
+        @Schema(description = "Se o funcionário pertence ao time de manejo de campo", example = "false")
+        Boolean isManejo
 ) { }

@@ -36,6 +36,12 @@ public class UsuarioService {
         funcionario.setUsu_tipo(TipoUsuario.FUNCIONARIO);
         funcionario.setUsu_inativo("N");
 
+        if (!repository.existsFuncionario()) {
+            funcionario.setUsu_is_admin(true);
+        }
+
+        funcionario.setUsu_is_manejo(Boolean.TRUE.equals(dto.isManejo()));
+
         String senhaCriptografada = passwordEncoder.encode(dto.senha());
         funcionario.setUsu_senha(senhaCriptografada);
 
@@ -106,9 +112,12 @@ public class UsuarioService {
         if (dto.email() != null)  funcionario.setUsu_email(dto.email());
         if (dto.cpf() != null)    funcionario.setUsu_cpf(dto.cpf());
 
-        // senha só atualiza se vier preenchida
         if (dto.senha() != null && !dto.senha().isBlank()) {
             funcionario.setUsu_senha(passwordEncoder.encode(dto.senha()));
+        }
+
+        if (dto.isManejo() != null) {
+            funcionario.setUsu_is_manejo(dto.isManejo());
         }
 
         return new UsuarioFuncionarioResponseDTO(funcionario);
@@ -120,13 +129,15 @@ public class UsuarioService {
                 .filter(u -> u.getUsu_tipo() == TipoUsuario.CLIENTE)
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado."));
 
-        if (dto.nome() != null) cliente.setUsu_nome(dto.nome());
+        if (dto.nome() != null)     cliente.setUsu_nome(dto.nome());
+        if (dto.email() != null)    cliente.setUsu_email(dto.email());
+        if (dto.cpf() != null)      cliente.setUsu_cpf(dto.cpf());
         if (dto.telefone() != null) cliente.setUsu_telefone(dto.telefone());
-        if (dto.cidade() != null) cliente.setUsu_cidade(dto.cidade());
-        if (dto.uf() != null) cliente.setUsu_uf(dto.uf());
-        if (dto.rg() != null) cliente.setUsu_rg(dto.rg());
+        if (dto.cidade() != null)   cliente.setUsu_cidade(dto.cidade());
+        if (dto.uf() != null)       cliente.setUsu_uf(dto.uf());
+        if (dto.rg() != null)       cliente.setUsu_rg(dto.rg());
 
-        return new UsuarioClienteResponseDTO(cliente);
+        return new UsuarioClienteResponseDTO(repository.save(cliente));
     }
 
     @Transactional

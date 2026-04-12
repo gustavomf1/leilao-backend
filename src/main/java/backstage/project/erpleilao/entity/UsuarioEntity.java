@@ -54,6 +54,9 @@ public class UsuarioEntity implements UserDetails {
     @Column(name = "usu_is_admin", nullable = false)
     private Boolean usu_is_admin = false;
 
+    @Column(name = "usu_is_manejo", nullable = false)
+    private Boolean usu_is_manejo = false;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "usuario_roles",
@@ -64,6 +67,9 @@ public class UsuarioEntity implements UserDetails {
 
     @OneToMany(mappedBy = "faz_titular", cascade = CascadeType.ALL)
     private List<FazendaEntity> usu_fazendaEntities;
+
+    @OneToMany(mappedBy = "pix_usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PixEntity> usu_pixKeys;
 
     @Column(name = "usu_dt_criacao", nullable = false, updatable = false)
     @CreationTimestamp
