@@ -4,6 +4,7 @@ import backstage.project.erpleilao.dtos.LoteDisplayDTO;
 import backstage.project.erpleilao.dtos.LoteRequestDTO;
 import backstage.project.erpleilao.entity.LoteEntity;
 import backstage.project.erpleilao.entity.enums.StatusLote;
+import backstage.project.erpleilao.repository.EspecieRepository;
 import backstage.project.erpleilao.repository.LeilaoRepository;
 import backstage.project.erpleilao.repository.LoteRepository;
 import backstage.project.erpleilao.repository.UsuarioRepository;
@@ -26,6 +27,9 @@ public class LoteService {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
+    private EspecieRepository especieRepository;
+
+    @Autowired
     private LeilaoRepository leilaoRepository;
 
     @Autowired
@@ -43,10 +47,15 @@ public class LoteService {
         lote.setIdadeEmMeses(dados.idadeEmMeses());
         lote.setPeso(dados.peso());
         lote.setRaca(dados.raca());
-        lote.setEspecie(dados.especie());
         lote.setCategoriaAnimal(dados.categoriaAnimal());
         lote.setObs(dados.obs());
         lote.setVendedorNomeRascunho(dados.vendedorNomeRascunho());
+
+        if (dados.especieId() != null) {
+            var especie = especieRepository.findById(dados.especieId())
+                    .orElseThrow(() -> new EntityNotFoundException("Espécie não encontrada"));
+            lote.setEspecie(especie);
+        }
 
         // Preço é opcional — manejo não preenche
         if (dados.precoCompra() != null) {
@@ -113,10 +122,17 @@ public class LoteService {
         lote.setIdadeEmMeses(dados.idadeEmMeses());
         lote.setPeso(dados.peso());
         lote.setRaca(dados.raca());
-        lote.setEspecie(dados.especie());
         lote.setCategoriaAnimal(dados.categoriaAnimal());
         lote.setObs(dados.obs());
         lote.setVendedorNomeRascunho(dados.vendedorNomeRascunho());
+
+        if (dados.especieId() != null) {
+            var especie = especieRepository.findById(dados.especieId())
+                    .orElseThrow(() -> new EntityNotFoundException("Espécie não encontrada"));
+            lote.setEspecie(especie);
+        } else {
+            lote.setEspecie(null);
+        }
 
         if (dados.precoCompra() != null) {
             lote.setPrecoCompra(dados.precoCompra());
