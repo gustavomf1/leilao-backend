@@ -22,8 +22,8 @@ public record LoteRequestDTO(
         @Schema(example = "Nelore", description = "Raça predominante")
         String raca,
 
-        @Schema(example = "Bovino", description = "Espécie do animal")
-        String especie,
+        @Schema(example = "1", description = "ID da espécie do animal")
+        Long especieId,
 
         @Schema(example = "Garrote", description = "Categoria do animal")
         String categoriaAnimal,

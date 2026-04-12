@@ -27,7 +27,9 @@ public class LoteEntity {
     private Integer idadeEmMeses;
     private Double peso;
     private String raca;
-    private String especie;
+    @ManyToOne
+    @JoinColumn(name = "especie_id")
+    private EspecieEntity especie;
     private String categoriaAnimal;
     private String obs;
 
