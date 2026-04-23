@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS lotes (
     raca             VARCHAR(255),
     especie          VARCHAR(255),
     categoria_animal VARCHAR(255),
+    obs_vaca_parida  VARCHAR(255),
     obs              VARCHAR(255),
     preco_compra     NUMERIC(19, 2),
     vendedor_id      BIGINT REFERENCES usuarios (usu_id),

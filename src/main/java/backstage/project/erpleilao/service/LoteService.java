@@ -48,6 +48,7 @@ public class LoteService {
         lote.setPeso(dados.peso());
         lote.setRaca(dados.raca());
         lote.setCategoriaAnimal(dados.categoriaAnimal());
+        lote.setObsVacaParida(dados.obsVacaParida());
         lote.setObs(dados.obs());
         lote.setVendedorNomeRascunho(dados.vendedorNomeRascunho());
 
@@ -123,6 +124,7 @@ public class LoteService {
         lote.setPeso(dados.peso());
         lote.setRaca(dados.raca());
         lote.setCategoriaAnimal(dados.categoriaAnimal());
+        lote.setObsVacaParida(dados.obsVacaParida());
         lote.setObs(dados.obs());
         lote.setVendedorNomeRascunho(dados.vendedorNomeRascunho());
 
@@ -165,7 +167,8 @@ public class LoteService {
                 .orElseThrow(() -> new EntityNotFoundException("Lote não encontrado"));
 
         if (lote.getStatus() != StatusLote.AGUARDANDO_LANCE) {
-            throw new IllegalStateException("Valor do lance só pode ser registrado quando o lote está em AGUARDANDO_LANCE");
+            throw new IllegalStateException(
+                    "Valor do lance só pode ser registrado quando o lote está em AGUARDANDO_LANCE");
         }
 
         lote.setPrecoCompra(preco);
@@ -183,8 +186,9 @@ public class LoteService {
 
         StatusLote novoStatus = switch (lote.getStatus()) {
             case AGUARDANDO_ESCRITORIO -> StatusLote.AGUARDANDO_LANCE;
-            case AGUARDANDO_LANCE      -> throw new IllegalStateException("Use o endpoint de preço para finalizar o lote (PATCH /{id}/preco)");
-            case FINALIZADO            -> throw new IllegalStateException("Lote já está finalizado");
+            case AGUARDANDO_LANCE ->
+                throw new IllegalStateException("Use o endpoint de preço para finalizar o lote (PATCH /{id}/preco)");
+            case FINALIZADO -> throw new IllegalStateException("Lote já está finalizado");
         };
 
         lote.setStatus(novoStatus);

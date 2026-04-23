@@ -32,6 +32,7 @@ public class LoteEntity {
     private EspecieEntity especie;
     private String categoriaAnimal;
     private String obs;
+    private String obsVacaParida;
 
     // Nullable — preenchido pelo responsável de preço (não pelo manejo)
     private BigDecimal precoCompra;

@@ -28,6 +28,9 @@ public record LoteRequestDTO(
         @Schema(example = "Garrote", description = "Categoria do animal")
         String categoriaAnimal,
 
+        @Schema(example = "1 cria", description = "Observações para vacas paridas (opcional, preenchido apenas para vacas paridas)")
+        String obsVacaParida,
+
         @Schema(example = "Animais vacinados e prontos para engorda", description = "Observações gerais")
         String obs,
 
